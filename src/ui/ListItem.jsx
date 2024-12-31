@@ -14,7 +14,7 @@ export default function ListItem({ item, onClick = null }) {
 
   if (isPending) return <SpinnerMini />;
   return (
-    <Item className="bg-focus text-clear d-flex align-items-center justify-content-start w-100" onClick={onClick}>
+    <Item className="bg-focus text-clear d-flex align-items-center justify-content-start w-100 my-2" onClick={onClick}>
       <div className="d-flex align-items-center col-10">
         <ListAvatar width="100px" src={data.Poster} />
         <span className="me-2 text-truncate w-25">{data.Title}</span>

@@ -46,7 +46,6 @@ export default function SignupForm({ flip }) {
   const { errors } = formState;
 
   const handelAction = (data) => {
-    console.log(data);
     const email = data.email;
     const password = data.password;
     const fullname = data.fullname;

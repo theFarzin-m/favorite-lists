@@ -1,4 +1,4 @@
-import React, { lazy, useState } from "react";
+import React, { lazy, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link, useParams } from "react-router-dom";
 
@@ -9,22 +9,22 @@ import { useAuth } from "../features/authentication/useAuth";
 import { useGetList } from "../features/lists/useList";
 import Operations from "../features/lists/Operations";
 import MovieDetail from "../ui/MovieDetail";
+import { getCurrentProfile } from "../services/ApiProfile";
 
 const CardBody = styled.div`
-  height: 300px;
+  height: 400px;
   overflow-y: auto;
   & > li {
     border-color: 1px solid var(--bg-300) !important;
   }
 `;
 
-
 const EmptyCard = styled.div`
   opacity: 0.5;
 `;
 
 const CardHead = styled.div`
-  height: 50px;
+  height: 60px;
 `;
 
 const WrapperOparations = styled.div`
@@ -40,22 +40,23 @@ const WrapperOparations = styled.div`
 
 export default function ListDetails() {
   const [sharing, setSharing] = useState(false);
-  const { user, isLoading } = useAuth();
   const { list, isLoading: isLoading2 } = useGetList();
-  const [selectedMovie, setSelectedMovie] = useState("")
+  const [selectedMovie, setSelectedMovie] = useState("");
 
   if (isLoading2) return <Loading />;
 
-const { username } = user.user_metadata;
-
-
   const { listName, imdbID, likes, id } = list;
-  
+  const { username, id: ProfileId, avatar } = list.belongTo;
   return (
     <div>
       <div className="w-100 custom-centerize">
         <WrapperOparations $sharing={sharing}>
-          <Operations setSharing={setSharing} sharing={sharing} likesCount={likes} listId={id} />
+          <Operations
+            setSharing={setSharing}
+            sharing={sharing}
+            likesCount={likes}
+            listId={id}
+          />
         </WrapperOparations>
       </div>
       <div className="row">
@@ -66,8 +67,8 @@ const { username } = user.user_metadata;
                 <div className="card-header d-flex justify-content-between align-items-center bg-focus">
                   <div className="ms-3 text-nowrap">
                     <CardHead className="custom-centerize">
-                      <Link to="/profile/1">
-                        <Avatar width="40px" />
+                      <Link to={`/profile/${ProfileId}`}>
+                        <Avatar width="60px" src={avatar} />
                       </Link>
                       <span className="fs-5 me-2 text-truncate">
                         {username}&apos;s <b>{listName}</b> favorites
@@ -78,7 +79,11 @@ const { username } = user.user_metadata;
 
                 <CardBody className="p-1 list-group-flush bg-bg">
                   {imdbID.map((i) => (
-                    <ListItem item={i}  key={i} onClick={() => setSelectedMovie(i)}/>
+                    <ListItem
+                      item={i}
+                      key={i}
+                      onClick={() => setSelectedMovie(i)}
+                    />
                   ))}
                 </CardBody>
               </div>
@@ -97,13 +102,13 @@ const { username } = user.user_metadata;
                   </div>
                 </div>
                 <CardBody className="p-1 list-group-flush bg-bg">
-                {selectedMovie.length > 0 ? 
-                <MovieDetail imdbID={selectedMovie} />
-                :
-                  <EmptyCard className="custom-centerize h-100">
-                    Click on Movie/Tv show for details
-                  </EmptyCard>
-                }
+                  {selectedMovie.length > 0 ? (
+                    <MovieDetail imdbID={selectedMovie} />
+                  ) : (
+                    <EmptyCard className="custom-centerize h-100">
+                      Click on Movie/Tv show for details
+                    </EmptyCard>
+                  )}
                 </CardBody>
               </div>
             </div>

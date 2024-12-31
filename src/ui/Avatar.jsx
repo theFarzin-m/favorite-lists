@@ -9,6 +9,7 @@ const ProfileImg = styled.div`
   }
   max-width: ${(props) => props.$size};
   max-height: ${(props) => props.$size};
+  aspect-ratio: 1/1;
 `;
 
 export default function Avatar({ width, src }) {

@@ -1,19 +1,48 @@
+/* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import FormRow from "../../ui/FormRow";
-import EyeSlash from "../../ui/EyeSlash";
 import ResetButton from "../../ui/ResetButton";
+import EditUser from "../authentication/EditUser";
+import styled from "styled-components";
+import Avatar from "../../ui/Avatar";
+import { useUpdateProfile } from "./useProfile";
 
-export default function EditProfile() {
-  const { register, handleSubmit, reset, formState, getValues } = useForm();
-  const [showPassword, setShowPassword] = useState(false);
+const FileLabel = styled.label`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
 
+  & input {
+    display: none;
+  }
+`;
+
+export default function EditProfile({ editeData = {}, toggleEdit }) {
+  const [avatar, setAvatar] = useState(null);
+
+  const { id: editeId, ...editeValues } = editeData;
+  const isEditeSession = Boolean(editeId);
+
+  const { register, handleSubmit, reset, formState, getValues } = useForm({
+    defaultValues: isEditeSession ? editeValues : {},
+  });
   const { errors } = formState;
 
+  const { updateProfile, isUpdating } = useUpdateProfile();
+
   const handelAction = (data) => {
-    console.log(data);
-    reset();
+    const newData = {
+      fullname: data.fullname,
+      username: data.username,
+      bio: data.bio,
+    };
+    updateProfile({ id: editeId, newData, avatar });
   };
 
   const handelErrors = (err) => {
@@ -24,23 +53,19 @@ export default function EditProfile() {
     <>
       <div className="h3 mb-3">Edite Profile</div>
       <form onSubmit={handleSubmit(handelAction, handelErrors)}>
-        <FormRow
-          label={"Email:"}
-          isRequerd={true}
-          error={errors?.email?.message}
-        >
-          <input
-            type="email"
-            className="form-control rounded border-0 bg-bg"
-            {...register("email", {
-              required: "This field is required",
-              pattern: {
-                value: /\S+@\S+\.\S+/,
-                message: "invalide email",
-              },
-            })}
+        <FileLabel className="mx-auto mb-4" htmlFor="avatar">
+          <Avatar
+            width="150px"
+            src={avatar ? URL.createObjectURL(avatar) : editeData.avatar}
           />
-        </FormRow>
+          <input
+            type="file"
+            id="avatar"
+            accept="image/*"
+            onChange={(e) => setAvatar(e.target.files[0])}
+            disabled={isUpdating}
+          />
+        </FileLabel>
 
         <FormRow
           label="Fullname:"
@@ -74,30 +99,22 @@ export default function EditProfile() {
           />
         </FormRow>
 
-        <FormRow
-          label="Password:"
-          isRequerd={true}
-          error={errors?.password?.message}
-        >
-          <EyeSlash Show={showPassword} setShow={setShowPassword} />
-          <input
-            type={showPassword ? "text" : "password"}
-            className="form-control rounded-0 rounded-start border-0 bg-bg"
-            {...register("password", {
-              required: "This field is required",
-              minLength: {
-                value: 8,
-                message: "Password most be 8 charecter long",
-              },
-            })}
+        <FormRow label="bio:" error={errors?.username?.bio}>
+          <textarea
+            className="form-control rounded border-0 bg-bg"
+            {...register("bio")}
           />
         </FormRow>
 
         <div className="d-flex justify-content-end mb-3">
+          <div className="btn text-info" onClick={() => toggleEdit(true)}>
+            change Password and Email
+          </div>
+
           <button className="btn bg-primary-clear text-dull ms-3">
             confirm
           </button>
-          <ResetButton />
+          <ResetButton onClick={reset} />
         </div>
       </form>
     </>

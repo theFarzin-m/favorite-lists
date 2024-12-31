@@ -10,9 +10,9 @@ const ResetBtn = styled.button`
   }
 `;
 
-export default function ResetButton() {
+export default function ResetButton({onClick}) {
   return (
-    <ResetBtn type="reset" className="btn text-clear">
+    <ResetBtn type="reset" className="btn text-clear" onClick={onClick}>
       Reset
     </ResetBtn>
   );

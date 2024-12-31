@@ -71,7 +71,7 @@ export function useUserUpdate() {
     // @ts-ignore
     mutationFn: updateUserApi,
     onSuccess: () => {
-      toast.success("User update successfully updated");
+      toast.success("confirm changes email send to your email");
       queryClient.invalidateQueries({
         queryKey: ["user"],
       });
@@ -83,13 +83,4 @@ export function useUserUpdate() {
   });
 
   return { userUpdate, isUpdating };
-}
-
-export function useGetProfile(profileId) {
-  const { data, isLoading } = useQuery({
-    queryKey: ["user", profileId],
-    queryFn: () => getProfile(profileId),
-  });
-
-  return { data, isLoading };
 }

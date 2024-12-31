@@ -242,3 +242,7 @@ hr {
 small {
   min-height: 10px;
 }
+
+button:disabled {
+  cursor: not-allowed;
+}

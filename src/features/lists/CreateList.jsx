@@ -43,6 +43,8 @@ export default function CreateList() {
   const { data, isPending } = useFetch(url + "s=" + query);
   const [imdbID, setImdbID] = useState([]);
   const { user, isLoading } = useAuth();
+  const [profile, setProfile] = useState({});
+  const { id } = profile;
 
   const [DATA, setDATA] = useState([
     {
@@ -74,7 +76,26 @@ export default function CreateList() {
         return newData;
       });
     }
-  }, [query]);
+
+    async function getCurrentProfile(userId) {
+      const { data, error } = await supabase
+        .from("profile")
+        .select("*")
+        .eq("user", userId)
+        .single();
+
+      if (error) {
+        console.log(error);
+        throw new Error("coudn't get profile");
+      }
+
+      setProfile(data);
+    }
+
+    if (!user) return;
+    let userId = user.id;
+    getCurrentProfile(userId);
+  }, [data, isPending, query, user]);
 
   const handelConfirm = () => {
     if (!DATA[1].items || !listName) {
@@ -91,7 +112,7 @@ export default function CreateList() {
       imdbID: selected,
       likes: 0,
       views: 0,
-      belongTo: user.id,
+      belongTo: profile.id,
     };
 
     createList(newList);

@@ -12,7 +12,7 @@ export async function getLists() {
 }
 
 export async function getAList(id) {
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from("list")
     .select("*")
     .eq("id", id)
@@ -22,6 +22,19 @@ export async function getAList(id) {
     console.error(error);
     throw new Error("coudn't fetch list");
   }
+
+  const { data: profile, error2 } = await supabase
+    .from("profile")
+    .select("*")
+    .eq("id", data.belongTo)
+    .single();
+
+  if (error2) {
+    console.error(error);
+    throw new Error("coudn't fetch profile");
+  }
+
+  data = {...data, belongTo: profile}
 
   return data;
 }
@@ -115,7 +128,7 @@ export async function getBookmark({ userId }) {
 export async function addBookmark({ userId, listId }) {
   const { error } = await supabase
     .from("bookmark")
-    .insert({ list: listId, user: userId })
+    .insert({ list: listId, user: userId });
 
   if (error) {
     console.error(error);
@@ -124,7 +137,10 @@ export async function addBookmark({ userId, listId }) {
 }
 
 export async function removeBookmark(bookmarkId) {
-  const { error } = await supabase.from("bookmark").delete().eq("id", bookmarkId);
+  const { error } = await supabase
+    .from("bookmark")
+    .delete()
+    .eq("id", bookmarkId);
 
   if (error) {
     console.error(error);
@@ -133,7 +149,10 @@ export async function removeBookmark(bookmarkId) {
 }
 
 export async function getUserLists(userId) {
-  const { error } = await supabase.from("list").select("*").eq("belongTo", userId);
+  const { error } = await supabase
+    .from("list")
+    .select("*")
+    .eq("belongTo", userId);
 
   if (error) {
     console.error(error);

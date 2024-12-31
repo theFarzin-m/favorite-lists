@@ -1,10 +1,11 @@
 import React, { lazy, useEffect, useRef } from "react";
 import styled from "styled-components";
 
-const Avatar = lazy(() => import("../ui/Avatar"));
 import Card from "../ui/Card";
 import ListOperation from "../ui/ListOperation";
 import { Link } from "react-router-dom";
+import Avatar from "../ui/Avatar";
+import { useGetSubscriptions } from "../features/profile/useProfile";
 
 const SubscriptionsStyle = styled.div`
   min-width: 100%;
@@ -14,6 +15,7 @@ const SubscriptionsStyle = styled.div`
 
 export default function Subscriptions() {
   const scrollContainerRef = useRef(null);
+  const {data, isLoading} = useGetSubscriptions()
 
   useEffect(() => {
     const handleWheel = (event) => {
@@ -50,62 +52,11 @@ export default function Subscriptions() {
           </button>
         </div>
 
-        <div>
-          <button className="btn custom-centerize flex-column  border-0 pt-3">
-            <Avatar width="100px" />
-            <span className="mt-2">username</span>
-          </button>
-        </div>
-
-        <div>
-          <button className="btn custom-centerize flex-column border-0 pt-3">
-            <Avatar width="100px" />
-            <span className="mt-2">username</span>
-          </button>
-        </div>
-
-        <div>
-          <button className="btn custom-centerize flex-column border-0 pt-3">
-            <Avatar width="100px" />
-            <span className="mt-2">username</span>
-          </button>
-        </div>
-
-        <div>
-          <button className="btn custom-centerize flex-column border-0 pt-3">
-            <Avatar width="100px" />
-            <span className="mt-2">username</span>
-          </button>
-        </div>
-
-        <div>
-          <button className="btn custom-centerize flex-column border-0 pt-3">
-            <Avatar width="100px" />
-            <span className="mt-2">username</span>
-          </button>
-        </div>
-
-        <div>
-          <button className="btn custom-centerize flex-column border-0 pt-3">
-            <Avatar width="100px" />
-            <span className="mt-2">username</span>
-          </button>
-        </div>
-
-        <div>
-          <button className="btn custom-centerize flex-column border-0 pt-3">
-            <Avatar width="100px" />
-            <span className="mt-2">username</span>
-          </button>
-        </div>
+        
       </SubscriptionsStyle>
       <ListOperation />
       <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        <Card />
+        {/* <Card /> */}
       </div>
     </>
   );
