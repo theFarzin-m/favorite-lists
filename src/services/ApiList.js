@@ -11,6 +11,22 @@ export async function getLists() {
   return data;
 }
 
+export async function getListsByProfileId(profileId) {
+  
+  const { data, error } = await supabase
+  .from("list")
+  .select("*")
+  .eq("belongTo", profileId);
+  
+  if (error) {
+    console.error(error);
+    throw new Error("coudn't fetch lists");
+  }
+  
+
+    return data;
+  }
+
 export async function getAList(id) {
   let { data, error } = await supabase
     .from("list")
@@ -34,81 +50,53 @@ export async function getAList(id) {
     throw new Error("coudn't fetch profile");
   }
 
-  data = {...data, belongTo: profile}
+  data = { ...data, belongTo: profile };
 
   return data;
 }
 
-export async function createEditList(newList) {
-  const { data, error } = await supabase
-    .from("list")
-    .insert([newList])
-    .select("*")
-    .single();
-
-  if (error) {
-    console.error(error);
-    throw new Error("coudn't fetch list");
-  }
-  return data;
-}
-
-export async function addLike({ userId, listId, newLikesCount }) {
-  const { data, error } = await supabase
-    .from("likes")
-    .insert({ list: listId, user: userId })
-    .select("id")
-    .single();
-
-  if (error) {
-    console.error(error);
-    throw new Error("sorry your like didn't count. try again");
-  }
-
-  const { error: errorUpdate } = await supabase
-    .from("list")
-    .update({ likes: newLikesCount })
-    .eq("id", listId);
-
-  if (errorUpdate) {
-    const { error } = await supabase.from("likes").delete().eq("id", data);
-    console.error(error);
-    throw new Error("sorry your like didn't count. try again");
-  }
-}
-
-export async function getLikes() {
-  const { data, error } = await supabase.from("likes").select("*");
-
-  if (error) {
-    console.error(error);
-    throw new Error("couden't get likes. try again");
-  }
-
-  return data;
-}
-
-export async function removeLike({ likeId, listId, newLikesCount }) {
-  const { error: errorUpdate } = await supabase
-    .from("list")
-    .update({ likes: newLikesCount })
-    .eq("id", listId);
-
-  if (errorUpdate) {
-    console.error(error);
-    throw new Error("Sorry. try Again");
-  }
-
-  const { error } = await supabase.from("likes").delete().eq("id", likeId);
-
-  if (error) {
-    console.error(error);
-    await supabase
+export async function createEditList({ newList, listId }) {
+  if (listId) {
+    const { data, error } = await supabase
       .from("list")
-      .update({ likes: newLikesCount + 1 })
-      .eq("id", listId);
-    throw new Error("Sorry. try Again");
+      .update(newList)
+      .eq("id", Number(listId))
+      .select("*")
+      .single();
+
+    if (error) {
+      console.error(error);
+      throw new Error("coudn't update list");
+    }
+    console.log(data);
+    return data;
+  } else {
+    const { data, error } = await supabase
+      .from("list")
+      .insert([newList])
+      .select("*")
+      .single();
+
+    if (error) {
+      console.error(error);
+      throw new Error("coudn't create list");
+    }
+    return data;
   }
+}
+
+export async function manageLikes({ userId, listId }) {
+  const { data, error } = await supabase.rpc("manage_likes", {
+    user_id: userId,
+    list_id: listId,
+  });
+
+  if (error) {
+    console.error(error);
+    throw new Error("ERORR");
+  }
+
+  return data;
 }
 
 export async function getBookmark({ userId }) {
@@ -125,10 +113,10 @@ export async function getBookmark({ userId }) {
   return data;
 }
 
-export async function addBookmark({ userId, listId }) {
+export async function addBookmark({ profileId, listId }) {
   const { error } = await supabase
     .from("bookmark")
-    .insert({ list: listId, user: userId });
+    .insert({ list: listId, profile: profileId });
 
   if (error) {
     console.error(error);
@@ -158,4 +146,17 @@ export async function getUserLists(userId) {
     console.error(error);
     throw new Error("Sorry. try Again");
   }
+}
+
+export async function increaseViewApi(listId) {
+  const { data, error } = await supabase.rpc("increase_view", {
+    list_id: listId,
+  });
+
+  if (error) {
+    console.error(error);
+    throw new Error("ERORR");
+  }
+
+  return data;
 }

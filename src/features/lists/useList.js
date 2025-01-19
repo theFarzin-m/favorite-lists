@@ -3,15 +3,15 @@ import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   addBookmark as addBookmarkApi,
-  addLike as addLikeApi,
   createEditList,
   getAList,
   getBookmark,
-  getLikes,
   getLists,
+  getListsByProfileId,
   getUserLists,
+  increaseViewApi,
+  manageLikes,
   removeBookmark as removeBookmarkApi,
-  removeLike as removeLikeApi,
 } from "../../services/ApiList";
 
 export function useGetLists() {
@@ -27,6 +27,19 @@ export function useGetLists() {
   return { isLoading, lists, error };
 }
 
+export function useGetListsByProfileId({ profileId }) {
+  const {
+    isLoading,
+    data: lists,
+    error,
+  } = useQuery({
+    queryKey: ["list", profileId],
+    queryFn: () => getListsByProfileId(profileId),
+  });
+
+  return { isLoading, lists, error };
+}
+
 export function useCreateList() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -34,14 +47,13 @@ export function useCreateList() {
   const { mutate: createList, isPending: isCreating } = useMutation({
     mutationFn: createEditList,
     onSuccess: (data) => {
-      toast.success("List create successfully");
+      toast.success("List create or update successfully");
       queryClient.invalidateQueries({
         queryKey: ["lists"],
       });
       navigate(`/explorer/list/${data.id}`);
     },
     onError: (err) => {
-      // @ts-ignore
       toast.error(err.message);
     },
   });
@@ -64,51 +76,21 @@ export function useGetList() {
   return { isLoading, list, error };
 }
 
-export function useCheckLike() {
-  const {
-    isLoading,
-    data: likes,
-    error,
-  } = useQuery({
-    queryKey: ["likes"],
-    queryFn: getLikes,
-  });
-
-  return { isLoading, likes, error };
-}
-
-export function useAddLike() {
+export function useManageLikes() {
   const queryClient = useQueryClient();
-  const { mutate: addLike, isPending: isLiking } = useMutation({
-    mutationFn: addLikeApi,
+  const { mutate: likesActions, isPending: isLiking } = useMutation({
+    mutationFn: manageLikes,
     onSuccess: () => {
       toast.success("your like has counted succesfuly");
       queryClient.invalidateQueries({ active: true });
     },
-    onError: () => {
-      toast.error("ERROR.couden't add please refresh");
+    onError: (err) => {
+      console.error(err);
+      toast.error("error");
     },
   });
 
-  return { addLike, isLiking };
-}
-
-export function useRemoveLike() {
-  const queryClient = useQueryClient();
-
-  const { mutate: removeLike, isPending: isRemoving } = useMutation({
-    mutationFn: removeLikeApi,
-    onSuccess: () => {
-      toast.success("your like succesfully remove");
-      queryClient.invalidateQueries({ active: true });
-    },
-
-    onError: () => {
-      toast.error("ERROR.couden't remove try again");
-    },
-  });
-
-  return { isRemoving, removeLike };
+  return { likesActions, isLiking };
 }
 
 export function useAddBookmark() {
@@ -154,8 +136,8 @@ export function useGetBookmark() {
     queryKey: ["bookmark"],
     queryFn: getBookmark,
   });
-  
-  return {bookmarks, error, isLoading}
+
+  return { bookmarks, error, isLoading };
 }
 
 export function useGetUserLists(userId) {
@@ -167,6 +149,17 @@ export function useGetUserLists(userId) {
     queryKey: ["list", userId],
     queryFn: () => getUserLists(userId),
   });
-  
-  return {bookmarks, error, isLoading}
+
+  return { bookmarks, error, isLoading };
+}
+
+
+export function useIncreaseView(){
+  const {mutate: increaseView, isPending} = useMutation({
+    mutationFn: increaseViewApi,
+    onSuccess: () => toast.success("view increase"),
+    onError: () => toast.error("view error")
+  })
+
+  return {increaseView, isPending}
 }

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
-import DndItems from "./DndItems";
+import DndItems from "./DndCard";
 
 export default function List({ DATA, setDATA }) {
   const [items, setItems] = useState([]);

@@ -17,7 +17,7 @@ export default function AddList({ inRow }) {
     >
       <div className="card-body">
         <h5 className="card-title mb-0">Add New List</h5>
-        <Link className="custom-centerize h-100" to="/my-lists/create-list">
+        <Link className="custom-centerize h-100" to="/create-list">
           <button className="btn text-clear text-dull">
             <i className="bi bi-plus-lg fs-1 text-dull"></i>
           </button>

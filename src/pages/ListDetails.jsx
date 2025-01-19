@@ -5,11 +5,9 @@ import { Link, useParams } from "react-router-dom";
 import Avatar from "../ui/Avatar";
 import Loading from "../ui/Loading";
 import ListItem from "../ui/ListItem";
-import { useAuth } from "../features/authentication/useAuth";
-import { useGetList } from "../features/lists/useList";
+import { useGetList, useIncreaseView } from "../features/lists/useList";
 import Operations from "../features/lists/Operations";
 import MovieDetail from "../ui/MovieDetail";
-import { getCurrentProfile } from "../services/ApiProfile";
 
 const CardBody = styled.div`
   height: 400px;
@@ -40,12 +38,20 @@ const WrapperOparations = styled.div`
 
 export default function ListDetails() {
   const [sharing, setSharing] = useState(false);
-  const { list, isLoading: isLoading2 } = useGetList();
+  const { list, isLoading } = useGetList();
   const [selectedMovie, setSelectedMovie] = useState("");
+  const { increaseView, isPending } = useIncreaseView();
 
-  if (isLoading2) return <Loading />;
+  useEffect(() => {
+    if (list && !isLoading) {
+      increaseView(list.id);
+    }
+  }, [isLoading, list]);
+
+  if (isLoading) return <Loading />;
 
   const { listName, imdbID, likes, id } = list;
+
   const { username, id: ProfileId, avatar } = list.belongTo;
   return (
     <div>

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useGetCurrentProfile, useSubscrib, useUnsubscrib } from "./useProfile";
+import { useGetCurrentProfile, useManageSubscription } from "./useProfile";
 import supabase from "../../services/supabase";
 
 export default function SubscriptionBtn({ subscriber }) {
-  const { subscrib, isPending: isSubscrib } = useSubscrib();
-  const { unsubscrib, isPending: isUnsubscrib } = useUnsubscrib();
+  const { subscribActions, isPending: isSubscrib } = useManageSubscription();
   const { data: profile, isLoading } = useGetCurrentProfile();
   const [subscribData, setSubscribData] = useState(null);
   const [isPending, setIsPending] = useState(false);
@@ -36,19 +35,22 @@ export default function SubscriptionBtn({ subscriber }) {
     if (subscriber && profile) {
       getIsSubscrib();
     }
-  }, [profile, isSubscrib, subscriber, isUnsubscrib]);
+  }, [profile, isSubscrib, subscriber]);
+
+  const handelSubscrib = () => {
+    if (!subscriber && !profile.id) return;
+    subscribActions({
+      subscriberId: subscriber,
+      subscribedToId: profile.id,
+    });
+  };
 
   return (
     <>
       {!subscribData ? (
         <button
           className="btn bg-focus w-100 custom-rounded-md ms-0 text-clear"
-          onClick={() =>
-            subscrib({
-              subscriberId: subscriber,
-              subscribedToId: profile.id,
-            })
-          }
+          onClick={handelSubscrib}
           disabled={isSubscrib || isPending}
         >
           <i className="bi bi-person-add ms-2"></i>Subscrib
@@ -56,8 +58,8 @@ export default function SubscriptionBtn({ subscriber }) {
       ) : (
         <button
           className="btn bg-focus w-100 custom-rounded-md ms-0 text-clear"
-          onClick={() => unsubscrib(subscribData.id)}
-          disabled={isUnsubscrib || isPending}
+          onClick={handelSubscrib}
+          disabled={isSubscrib || isPending}
         >
           <i className="bi bi-person-dash ms-2"></i>Unubscrib
         </button>

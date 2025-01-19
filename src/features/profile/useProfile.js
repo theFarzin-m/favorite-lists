@@ -7,8 +7,7 @@ import {
   getBookmarkedLists,
   getSubscriptions,
   getCurrentProfile,
-  subscribApi,
-  unsubscribApi,
+  manageSubscription,
 } from "../../services/ApiProfile";
 import toast from "react-hot-toast";
 import { useAuth } from "../authentication/useAuth";
@@ -69,46 +68,62 @@ export function useGetBookmarkedLists(profileId) {
 
 export function useGetSubscriptions(profileId) {
   const { data, isLoading, error } = useQuery({
-    queryKey: ["bookmark", profileId],
+    queryKey: ["subscribtions", profileId],
     queryFn: () => getSubscriptions(profileId),
   });
   return { data, isLoading, error };
 }
 
-export function useSubscrib() {
+export function useManageSubscription() {
   const queryClient = useQueryClient();
 
-  const { mutate: subscrib, isPending } = useMutation({
-    mutationFn: subscribApi,
+  const { mutate: subscribActions, isPending } = useMutation({
+    mutationFn: manageSubscription,
 
     onSuccess: () => {
-      toast.success("subscriped");
-      queryClient.invalidateQueries({
-        queryKey: ["subscriptions"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
 
     onError: (err) => toast.error(err.message),
   });
 
-  return { subscrib, isPending };
+  return { subscribActions, isPending };
 }
 
-export function useUnsubscrib() {
-  const queryClient = useQueryClient();
+// export function useSubscrib() {
+//   const queryClient = useQueryClient();
 
-  const { mutate: unsubscrib, isPending } = useMutation({
-    mutationFn: unsubscribApi,
+//   const { mutate: subscrib, isPending } = useMutation({
+//     mutationFn: subscribApi,
 
-    onSuccess: () => {
-      toast.success("unSubscrib");
-      queryClient.invalidateQueries({
-        queryKey: ["subscriptions"],
-      });
-    },
+//     onSuccess: () => {
+//       toast.success("subscriped");
+//       queryClient.invalidateQueries({
+//         queryKey: ["subscriptions"],
+//       });
+//     },
 
-    onError: (err) => toast.error(err.message),
-  });
+//     onError: (err) => toast.error(err.message),
+//   });
 
-  return { unsubscrib, isPending };
-}
+//   return { subscrib, isPending };
+// }
+
+// export function useUnsubscrib() {
+//   const queryClient = useQueryClient();
+
+//   const { mutate: unsubscrib, isPending } = useMutation({
+//     mutationFn: unsubscribApi,
+
+//     onSuccess: () => {
+//       toast.success("unSubscrib");
+//       queryClient.invalidateQueries({
+//         queryKey: ["subscriptions"],
+//       });
+//     },
+
+//     onError: (err) => toast.error(err.message),
+//   });
+
+//   return { unsubscrib, isPending };
+// }

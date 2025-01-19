@@ -9,6 +9,7 @@ import SpinnerMini from "./SpinnerMini";
 import { useFetch } from "../hooks/usefetch";
 import { url } from "../assets/variables";
 import ListItem from "./ListItem";
+import { useSelector } from "react-redux";
 
 const CardStyle = styled.div`
   max-width: 300px !important;
@@ -42,6 +43,8 @@ export default function Card({ list }) {
   const [scrollDown, setScrollDown] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [bookmark, setBookmark] = useState(false);
+  const profileId = useSelector((store) => store.profile.profileId);
+
   const navigate = useNavigate();
 
   const handelScroll = (e) => {
@@ -91,20 +94,22 @@ export default function Card({ list }) {
           </TooltipComponent>
         </div>
 
-        <Menus>
-          <Menus.toggle toggleId="listId" />
-          <Menus.list listId="listId">
-            <Menus.button
-              icon={<i className="bi bi-pencil-square text-clear"></i>}
-              onClick={() => navigate("/my-lists/create-list/:1")}
-            >
-              Edite List
-            </Menus.button>
-            <Menus.button icon={<i className="bi bi-trash text-clear"></i>}>
-              Delete
-            </Menus.button>
-          </Menus.list>
-        </Menus>
+        {list.belongTo === profileId && (
+          <Menus>
+            <Menus.toggle toggleId={list.id} />
+            <Menus.list listId={list.id}>
+              <Menus.button
+                icon={<i className="bi bi-pencil-square text-clear"></i>}
+                onClick={() => navigate(`/create-list/${list.id}`)}
+              >
+                Edite List
+              </Menus.button>
+              <Menus.button icon={<i className="bi bi-trash text-clear"></i>}>
+                Delete
+              </Menus.button>
+            </Menus.list>
+          </Menus>
+        )}
       </div>
       <CardBody
         className="list-group p-2 list-group-flush bg-bg"

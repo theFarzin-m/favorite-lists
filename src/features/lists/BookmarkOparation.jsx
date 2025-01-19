@@ -4,16 +4,15 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../authentication/useAuth";
 import supabase from "../../services/supabase";
 import { useAddBookmark, useRemoveBookmark } from "./useList";
+import { useSelector } from "react-redux";
 
 export default function BookmarkOparation({ display }) {
   const { id: listId } = useParams();
+  const profileId = useSelector(s => s.profile.profileId)
   const [bookmark, setBookmark] = useState();
-  const [isBooking, setISBooking] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { addBookmark, isPending: Bookmarking } = useAddBookmark();
   const { removeBookmark, isPending: isRemoving } = useRemoveBookmark();
-  const { user } = useAuth();
-  const userId = user?.id;
 
   useEffect(() => {
     async function getBookmark() {
@@ -23,7 +22,7 @@ export default function BookmarkOparation({ display }) {
           .from("bookmark")
           .select("*")
           .eq("list", listId)
-          .eq("user", userId);
+          .eq("profile", profileId);
 
         if (error) {
           throw error;
@@ -37,17 +36,17 @@ export default function BookmarkOparation({ display }) {
       }
     }
 
-    if (user && listId) {
+    if (profileId && listId) {
       getBookmark();
     }
-  }, [Bookmarking, isRemoving, listId, user, userId]);
+  }, [Bookmarking, isRemoving, listId, profileId]);
 
   const handelBookmark = () => {
     if (bookmark.length) {
       let bookmarkId = bookmark[0].id;
       removeBookmark(bookmarkId);
     } else {
-      addBookmark({ userId, listId });
+      addBookmark({ profileId, listId });
     }
   };
 

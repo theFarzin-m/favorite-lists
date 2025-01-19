@@ -230,6 +230,10 @@ hr {
     color: var(--accent-200) !important;
   }
 }
+
+.sidebar .active:has(img) > * {
+  box-shadow: 0 0 0 2px var(--primary-100);
+}
 /* sidebar -end- */
 #subscriptions button.active {
   border: none !important;

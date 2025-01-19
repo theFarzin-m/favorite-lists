@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
+import supabase from "../services/supabase";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
-import Avatar from "./Avatar";
-import { useGetCurrentProfile } from "../features/profile/useProfile";
 import { useAuth } from "../features/authentication/useAuth";
-import supabase from "../services/supabase";
+import Avatar from "./Avatar";
+import { addProfileId } from "../store/profile/profileSlice";
 
 const SidebarStyle = styled.div`
   width: 200px;
@@ -14,26 +15,29 @@ const SidebarStyle = styled.div`
 `;
 
 export default function Sidebar() {
+  const dispatch = useDispatch();
   const { user, isLoading } = useAuth();
   const [profile, setProfile] = useState({});
   const { id, username, fullname, avatar } = profile;
 
-  useEffect(() => {
-    async function getCurrentProfile(userId) {
-      const { data, error } = await supabase
-        .from("profile")
-        .select("*")
-        .eq("user", userId)
-        .single();
+  async function getCurrentProfile(userId) {
+    const { data, error } = await supabase
+      .from("profile")
+      .select("*")
+      .eq("user", userId)
+      .single();
 
-      if (error) {
-        console.log(error);
-        throw new Error("coudn't get profile");
-      }
-
-      setProfile(data);
+    if (error) {
+      console.log(error);
+      throw new Error("coudn't get profile");
     }
 
+    setProfile(data);
+
+    dispatch(addProfileId(data.id));
+  }
+
+  useEffect(() => {
     if (!user) return;
     let userId = user.id;
     getCurrentProfile(userId);
@@ -45,7 +49,9 @@ export default function Sidebar() {
     <SidebarStyle className="sidebar pb-3 d-flex justify-content-between align-items-center flex-column">
       <div className="d-flex justify-content-start align-items-center flex-column">
         <div className="custom-centerize flex-column">
+        <NavLink to={`/profile/${id}`}>
           <Avatar width="60px" src={avatar} />
+        </NavLink>
           <div>{username}</div>
           <div className="small text-secondary">{fullname}</div>
         </div>
@@ -56,18 +62,6 @@ export default function Sidebar() {
                 <i className="bi bi-speedometer2"></i>
               </div>
               <span className="me-3">Dashboard</span>
-            </NavLink>
-          </li>
-
-          <li className="mb-4">
-            <NavLink
-              to="/my-lists"
-              className="custom-centerize justify-content-start text-none"
-            >
-              <div className="bg-focus icon-wrapper custom-centerize">
-                <i className="bi bi-list-nested"></i>
-              </div>
-              <span className="me-3">My lists</span>
             </NavLink>
           </li>
 
@@ -85,6 +79,30 @@ export default function Sidebar() {
 
           <li className="mb-4">
             <NavLink
+              to={`/create-list`}
+              className="custom-centerize justify-content-start text-none"
+            >
+              <div className="bg-focus icon-wrapper custom-centerize">
+                <i className="bi bi-plus-circle"></i>
+              </div>
+              <span className="me-3">Cerate List</span>
+            </NavLink>
+          </li>
+
+          <li className="mb-4">
+            <NavLink
+              to="/subscriptions"
+              className="custom-centerize justify-content-start text-none"
+            >
+              <div className="bg-focus icon-wrapper custom-centerize">
+                <i className="bi bi-people"></i>
+              </div>
+              <span className="me-3">Subscriptions</span>
+            </NavLink>
+          </li>
+
+          {/* <li className="mb-4">
+            <NavLink
               to={`/profile/${id}`}
               className="custom-centerize justify-content-start text-none"
             >
@@ -93,7 +111,7 @@ export default function Sidebar() {
               </div>
               <span className="me-3">Profile</span>
             </NavLink>
-          </li>
+          </li> */}
         </ul>
       </div>
     </SidebarStyle>

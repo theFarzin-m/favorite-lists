@@ -85,7 +85,7 @@ export async function getBookmarkedLists(profileId) {
   const { data, error } = await supabase
     .from("bookmark")
     .select("*")
-    .eq("user", profileId);
+    .eq("profile", profileId);
 
   if (error) {
     console.log(error);
@@ -97,8 +97,8 @@ export async function getBookmarkedLists(profileId) {
 
 export async function getSubscriptions(profileId) {
   const { data, error } = await supabase
-    .from("bookmark")
-    .select("*")
+    .from("subscriptions")
+    .select("id, subscriber(*)")
     .eq("subscription", profileId);
 
   if (error) {
@@ -109,7 +109,7 @@ export async function getSubscriptions(profileId) {
   return data;
 }
 
-export async function subscribApi({subscriberId, subscribedToId}) {
+export async function manageSubscription({subscriberId, subscribedToId}) {
   // the best solution
   const { data, error } = await supabase.rpc('manage_subscription', {
     subscriber_id: subscriberId,
@@ -117,22 +117,10 @@ export async function subscribApi({subscriberId, subscribedToId}) {
   });
 
   if (error) {
-    throw error;
+    console.error(error);
+    throw new Error("ERORR");
   }
 
   return data;
 }
 
-export async function unsubscribApi(id) {
-  const { data, error } = await supabase
-    .from("subscriptions")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    console.log(error);
-    throw new Error("coudn't subscrib");
-  }
-
-  return data;
-}

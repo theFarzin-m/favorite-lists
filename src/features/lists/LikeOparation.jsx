@@ -2,43 +2,57 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { useAuth } from "../authentication/useAuth";
-import { useAddLike, useCheckLike, useRemoveLike } from "./useList";
+import { useManageLikes } from "./useList";
 import TooltipComponent from "../../ui/TooltipComponent";
+import supabase from "../../services/supabase";
 
 export default function LikeOparation({ likesCount, display }) {
   const { id: listId } = useParams();
 
   const [isLiked, setIsLiked] = useState(false);
   const [like, setLike] = useState([]);
-  const { likes, isLoading: isCheking } = useCheckLike();
-  const { addLike, isLiking } = useAddLike();
-  const { removeLike, isRemoving } = useRemoveLike();
-  
+  const { likesActions, isLiking } = useManageLikes();
+  const [isLoading, setIsLoading] = useState(false);
+
   const { user } = useAuth();
   const userId = user?.id;
 
   useEffect(() => {
-    if (isCheking && !user) return;
-    setLike(() =>
-      likes?.filter(
-        (like) => like.list === Number(listId) && like.user === user.id
-      )
-    );
+    async function getLikes() {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("likes")
+          .select("*")
+          .eq("list", listId)
+          .eq("userid", userId)
+          .single();
 
-    setIsLiked(() => like?.length);
-  }, [isCheking, likes, listId, user, isRemoving, isLiking, like?.length]);
+        if (error) {
+          throw error;
+        }
+
+        setLike(() => data);
+        setIsLiked(() => (data ? 1 : 0));
+      } catch (err) {
+        console.log(err);
+        setIsLiked(false);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    if (listId && userId) {
+      getLikes();
+    }
+  }, [listId, user, like.length, userId, isLiking]);
 
   const handelLike = () => {
-    let newLikesCount = Number(likesCount);
-    if (isLiked) {
-      let likeId = like[0].id;
-      newLikesCount = newLikesCount > 0 ? newLikesCount - 1 : newLikesCount;
-      console.log(newLikesCount);
-      removeLike({ likeId, listId, newLikesCount });
-    } else {
-      newLikesCount += 1;
-      addLike({ listId, userId, newLikesCount });
-    }
+    if (!userId && !listId && isLiking) return;
+    likesActions({
+      listId,
+      userId,
+    });
   };
 
   return (

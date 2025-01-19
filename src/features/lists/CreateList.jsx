@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import List from "../../ui/List";
 import SearchBox from "../../ui/SearchBox";
 import { useFetch } from "../../hooks/usefetch";
 import { url } from "../../assets/variables";
@@ -9,6 +8,8 @@ import { useCreateList } from "./useList";
 import toast from "react-hot-toast";
 import supabase from "../../services/supabase";
 import { useAuth } from "../authentication/useAuth";
+import DndCard from "../../ui/DndCard";
+import { useParams } from "react-router-dom";
 
 const CancelBtn = styled.button`
   border: 1px solid var(--primary-100);
@@ -38,26 +39,16 @@ const Input = styled.input`
 `;
 
 export default function CreateList() {
-  const [query, setQuery] = useState("batman");
+  const [query, setQuery] = useState("");
   const [listName, setListName] = useState("");
   const { data, isPending } = useFetch(url + "s=" + query);
   const [imdbID, setImdbID] = useState([]);
   const { user, isLoading } = useAuth();
   const [profile, setProfile] = useState({});
   const { id } = profile;
-
-  const [DATA, setDATA] = useState([
-    {
-      id: "movies",
-      label: "All movies",
-      items: [],
-    },
-    {
-      id: "list",
-      label: "Your List",
-      items: [],
-    },
-  ]);
+  const { id: listId } = useParams();
+  const [table1, setTable1] = useState([]);
+  const [table2, setTable2] = useState([]);
   const { createList, isCreating } = useCreateList();
 
   useEffect(() => {
@@ -67,14 +58,7 @@ export default function CreateList() {
         id: d.imdbID,
       }));
 
-      setDATA((prevData) => {
-        const newData = [...prevData]; // ایجاد یک کپی جدید از state
-        newData[0] = {
-          ...newData[0], // کپی از اولین آیتم
-          items: search, // به‌روزرسانی بخش مورد نظر
-        };
-        return newData;
-      });
+      setTable1(() => search);
     }
 
     async function getCurrentProfile(userId) {
@@ -92,30 +76,62 @@ export default function CreateList() {
       setProfile(data);
     }
 
-    if (!user) return;
-    let userId = user.id;
-    getCurrentProfile(userId);
+    async function getList() {
+      const { data, error } = await supabase
+        .from("list")
+        .select("*")
+        .eq("id", listId)
+        .single();
+
+      if (error) {
+        console.log(error);
+        throw new Error("coudn't get list");
+      }
+
+      setListName(data.listName);
+
+      let listItems = [];
+      listItems = data.imdbID.reduce((acc, curr) => [...acc, { id: curr }], []);
+      setTable2(listItems);
+    }
+
+    if (!user) {
+      let userId = user.id;
+      getCurrentProfile(userId);
+    }
+    if (listId) {
+      getList();
+    }
   }, [data, isPending, query, user]);
 
   const handelConfirm = () => {
-    if (!DATA[1].items || !listName) {
+    if (!table2 || !listName) {
       toast.error("pleas drag and drop some movies and select a name");
       return;
     }
     let selected = [];
-    selected = DATA[1].items.map((d) => d.id);
+    selected = table2.map((d) => d.id);
 
-    setImdbID((i) => selected);
+    setImdbID(() => selected);
+    let newList;
 
-    const newList = {
-      listName: listName,
-      imdbID: selected,
-      likes: 0,
-      views: 0,
-      belongTo: profile.id,
-    };
+    if (listId) {
+      newList = {
+        listName: listName,
+        imdbID: selected,
+      };
+      createList({newList, listId});
+    } else {
+      newList = {
+        listName: listName,
+        imdbID: selected,
+        likes: 0,
+        views: 0,
+        belongTo: profile.id,
+      };
+      createList({newList});
+    }
 
-    createList(newList);
   };
 
   return (
@@ -144,7 +160,12 @@ export default function CreateList() {
         <SearchBox size="md" query={query} setQuery={setQuery} />
       </div>
       <div className="row">
-        <List DATA={DATA} setDATA={setDATA} />
+        <DndCard
+          table1={table1}
+          table2={table2}
+          setTable1={setTable1}
+          setTable2={setTable2}
+        />
       </div>
     </>
   );
