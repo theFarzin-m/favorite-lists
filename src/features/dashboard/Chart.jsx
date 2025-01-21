@@ -58,41 +58,36 @@ export default function Chart() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const makeChartData = (id) => {
-      setData([]);
+    const makeChartData = async (ids) => {
+      let tempData = []; // آرایه موقت برای جمع‌آوری داده‌ها
 
-      fetch(url + "i=" + id)
-        .then((res) => res.json())
-        .then((data) =>
-          setData((chart) => {
-            let tmp = data.Genre.split(",");
-            let newData = tmp.reduce(
-              (acc, cur) => {
-                let genre = cur.trim();
-                let existing = acc.find((item) => item.genre === genre);
-                if (existing) {
-                  existing.count += 1; // افزایش شمارش در صورت وجود
-                } else {
-                  acc.push({ genre, count: 1 }); // اضافه کردن ژانر جدید
-                }
-                return acc;
-              },
-              [...chart]
-            ); // آرایه اولیه از `chart` است
-            newData.sort((a, b) => b.count - a.count);
-            return newData; // بازگرداندن آرایه به‌روزرسانی‌شده
-          })
-        );
+      for (const id of ids) {
+        const res = await fetch(url + "i=" + id);
+        const data = await res.json();
+
+        const genres = data.Genre.split(",");
+        genres.forEach((genre) => {
+          genre = genre.trim();
+          const existing = tempData.find((item) => item.genre === genre);
+          if (existing) {
+            existing.count += 1; // افزایش شمارش در صورت وجود
+          } else {
+            tempData.push({ genre, count: 1 }); // اضافه کردن ژانر جدید
+          }
+        });
+      }
+
+      // مرتب کردن و محدود کردن به 10 آیتم
+      tempData.sort((a, b) => b.count - a.count);
+      setData(tempData.slice(0, 10)); // به‌روزرسانی state تنها یک بار
     };
 
     if (lists) {
-      lists.map((list) => {
-        list.imdbID.map((id) => {
-          makeChartData(id);
-        });
-      });
+      const allIds = lists.flatMap((list) => list.imdbID); // جمع‌آوری تمام IDها
+      makeChartData(allIds);
     }
   }, [lists, isLoading]);
+
   return (
     <Box className="bg-focus custom-rounded-lg pt-2">
       <div className="fs-4 text-center">Most Ganre you use in Lists</div>

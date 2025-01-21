@@ -1,6 +1,6 @@
 import React, { lazy, useEffect, useState } from "react";
 import styled from "styled-components";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 
 import Avatar from "../ui/Avatar";
 import Loading from "../ui/Loading";
@@ -44,15 +44,18 @@ export default function ListDetails() {
 
   useEffect(() => {
     if (list && !isLoading) {
-      increaseView(list.id);
+      if (!document.cookie.includes(`${list.id}=true`)) {
+        document.cookie = `${list.id}=true ; max-age=` + 60 * 60 * 24;
+        increaseView(list.id);
+      }
     }
   }, [isLoading, list]);
 
   if (isLoading) return <Loading />;
 
   const { listName, imdbID, likes, id } = list;
-
   const { username, id: ProfileId, avatar } = list.belongTo;
+
   return (
     <div>
       <div className="w-100 custom-centerize">

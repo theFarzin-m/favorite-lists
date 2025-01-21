@@ -1,21 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import Card from "../ui/Card";
 import ListOperation from "../ui/ListOperation";
 import Loading from "../ui/Loading";
-import { useGetLists } from "../features/lists/useList";
+import { useGetLists, useSearchedLists } from "../features/lists/useList";
+import { Spinner } from "react-bootstrap";
 
 export default function Explorer() {
-  const { isLoading, lists } = useGetLists();
+  const [data, setData] = useState(null),
+    { searchedLists, isPending } = useSearchedLists(),
+    [query, setQuery] = useState(""),
+    [sort, setSort] = useState("created_at"),
+    [asc, setAsc] = useState(false),
+    [time, setTime] = useState("0");
 
-  if (isLoading) return <Loading />;
+  useEffect(() => {
+    searchedLists(
+      { query, sort, asc, time },
+      {
+        onSuccess: (result) => {
+          setData(result);
+          console.log(result);
+        },
+      }
+    );
+  }, [asc, query, sort, time]);
+
   return (
     <>
-      <ListOperation />
-      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-      {lists?.map(list => 
-        <Card key={list.id} list={list} />
-      )}
+      <ListOperation
+        query={query}
+        setQuery={setQuery}
+        sort={sort}
+        setSort={setSort}
+        setAsc={setAsc}
+        time={time}
+        setTime={setTime}
+      />
+      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-1 row-cols-xl-3 gy-4 mx-auto w-100 px-2 px-sm-0">
+        {isPending ? (
+          <Spinner />
+        ) : (
+          data?.map((list) => <Card key={list.id} list={list} />)
+        )}
       </div>
     </>
   );

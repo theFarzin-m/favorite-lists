@@ -1,18 +1,23 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import ListAvatar from "./ListAvatar";
 import Menus from "./Menus";
-import TooltipComponent from "./TooltipComponent";
-import SpinnerMini from "./SpinnerMini";
-import { useFetch } from "../hooks/usefetch";
-import { url } from "../assets/variables";
 import ListItem from "./ListItem";
-import { useSelector } from "react-redux";
+import Modal from "./Modal";
+import ConfirmDelete from "./ConfirmDelete";
+import { useDeleteList } from "../features/lists/useList";
 
 const CardStyle = styled.div`
   max-width: 300px !important;
+  min-width: 300px;
+
+  @media screen and (max-width: 992px) {
+    max-width: 100% !important;
+  }
+
 `;
 const ScrollArrow = styled.div`
   left: 45%;
@@ -41,11 +46,11 @@ const CardBody = styled.div`
 export default function Card({ list }) {
   const [scrollUp, setScrollUp] = useState(false);
   const [scrollDown, setScrollDown] = useState(true);
-  const [isLiked, setIsLiked] = useState(false);
-  const [bookmark, setBookmark] = useState(false);
-  const profileId = useSelector((store) => store.profile.profileId);
-
+  const { deleteList, isPending } = useDeleteList();
+  const profileId = useSelector((s) => s.profile.profileId);
   const navigate = useNavigate();
+
+  const { id: listId, belongTo, listName, imdbID } = list;
 
   const handelScroll = (e) => {
     if (e.target.scrollTop == 0) {
@@ -61,52 +66,54 @@ export default function Card({ list }) {
   };
 
   return (
-    <CardStyle className="card bg-focus text-clear p-0 mx-4">
+    <CardStyle className="card bg-focus text-clear p-0 mx-md-auto mx-2">
       <div className="card-header d-flex justify-content-between align-items-center bg-focus">
-        <Link to={`/explorer/list/${list.id}`} className="custom-centerize">
-          {/* <ListAvatar width="30px" /> */}
-          <span className="mx-2">{list.listName}</span>
+        <Link to={`/explorer/list/${listId}`} className="custom-centerize">
+          <ListAvatar width="30px" src={belongTo.avatar} alt={`${belongTo.username} avatar`} />
+          <span className="mx-2">{listName}</span>
         </Link>
-        <div className="d-flex">
-          <TooltipComponent tooltipText="like 24k" placement="top">
-            <span
-              className="custom-centerize flex-column mx-2"
-              onClick={() => setIsLiked((like) => !like)}
-            >
-              {isLiked ? (
-                <i className="bi bi-suit-heart-fill text-danger"></i>
-              ) : (
-                <i className="bi bi-suit-heart"></i>
-              )}
-            </span>
-          </TooltipComponent>
-          <TooltipComponent tooltipText="Bookmark" placement="top">
-            <span
-              className="custom-centerize flex-column mx-2"
-              onClick={() => setBookmark((b) => !b)}
-            >
-              {bookmark ? (
-                <i className="bi bi-bookmark-fill text-info"></i>
-              ) : (
-                <i className="bi bi-bookmark"></i>
-              )}
-            </span>
-          </TooltipComponent>
-        </div>
+        <Modal>
+          <Modal.open opens={listId}>
+            <button className="btn">
+              <i className="bi bi-trash text-clear"></i>
+            </button>
+          </Modal.open>
+          <Modal.window name={listId}>
+            <ConfirmDelete
+              onConfirm={() => deleteList(listId)}
+              disabled={isPending}
+              resourceName={listName}
+            />
+          </Modal.window>
+        </Modal>
 
-        {list.belongTo === profileId && (
+        {belongTo.id === profileId && (
           <Menus>
-            <Menus.toggle toggleId={list.id} />
-            <Menus.list listId={list.id}>
+            <Menus.toggle toggleId={listId} />
+            <Menus.list listId={listId}>
               <Menus.button
                 icon={<i className="bi bi-pencil-square text-clear"></i>}
-                onClick={() => navigate(`/create-list/${list.id}`)}
+                onClick={() => navigate(`/create-list/${listId}`)}
               >
                 Edite List
               </Menus.button>
-              <Menus.button icon={<i className="bi bi-trash text-clear"></i>}>
-                Delete
-              </Menus.button>
+
+              <Modal>
+                <Modal.open opens={listId}>
+                  <Menus.button
+                    icon={<i className="bi bi-trash text-clear"></i>}
+                  >
+                    Delete
+                  </Menus.button>
+                </Modal.open>
+                <Modal.window name={listId}>
+                  <ConfirmDelete
+                    onConfirm={() => deleteList(listId)}
+                    disabled={isPending}
+                    resourceName={listName}
+                  />
+                </Modal.window>
+              </Modal>
             </Menus.list>
           </Menus>
         )}
@@ -123,7 +130,7 @@ export default function Card({ list }) {
           <i className="bi bi-chevron-double-up"></i>
         </ScrollArrow>
 
-        {list.imdbID.map((id) => (
+        {imdbID.map((id) => (
           <ListItem key={id} item={id} />
         ))}
 

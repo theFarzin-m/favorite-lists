@@ -11,7 +11,6 @@ import {
 } from "../../services/ApiProfile";
 import toast from "react-hot-toast";
 import { useAuth } from "../authentication/useAuth";
-import { useEffect } from "react";
 
 export function useGetProfile(profileId) {
   const { data, isLoading, error } = useQuery({

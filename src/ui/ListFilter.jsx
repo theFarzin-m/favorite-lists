@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ListFilter() {
+export default function ListFilter({ time, setTime, sort, setSort, setAsc }) {
   return (
     <>
       <div className="ms-lg-4 ms-md-2 mb-4 mb-md-0 text-nowrap">
@@ -9,11 +9,10 @@ export default function ListFilter() {
           className="btn bg-primary-clear text-dull"
           name="time"
           id="time"
-          defaultValue="0"
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
         >
-          <option value="0">
-            All Time
-          </option>
+          <option value="0">All Time</option>
           <option value="1">Today</option>
           <option value="7">Week</option>
           <option value="30">Month</option>
@@ -23,16 +22,34 @@ export default function ListFilter() {
 
       <div className="text-nowrap">
         <span className="ms-lg-3 ms-md-2 ms-3 fs-5">Sort By:</span>
-        <button className="btn  rounded-0 rounded-end bg-primary-clear text-dull">
+        <button
+          className={`btn  rounded-0 rounded-end bg-primary-clear text-dull ${
+            sort === "views" ? "active" : ""
+          }`}
+          onClick={() => setSort("views")}
+        >
           View
         </button>
-        <button className="btn rounded-0 bg-primary-clear  text-dull">
+        <button
+          className={`btn rounded-0 bg-primary-clear  text-dull ${
+            sort === "likes" ? "active" : ""
+          }`}
+          onClick={() => setSort("likes")}
+        >
           Like
         </button>
-        <button className="btn  rounded-0 rounded-start bg-primary-clear text-dull">
+        <button
+          className={`btn  rounded-0 rounded-start bg-primary-clear text-dull ${
+            sort === "created_at" ? "active" : ""
+          }`}
+          onClick={() => setSort("created_at")}
+        >
           Latest
         </button>
-        <button className="btn bg-primary-clear text-dull me-2">
+        <button
+          className="btn bg-primary-clear text-dull me-2"
+          onClick={() => setAsc((a) => !a)}
+        >
           <i className="bi bi-arrow-down-up"></i>
         </button>
       </div>

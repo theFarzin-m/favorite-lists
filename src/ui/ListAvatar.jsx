@@ -11,7 +11,7 @@ const ProfileImg = styled.div`
   max-height: ${(props) => props.$size};
 `;
 
-export default function ListAvatar({ width, src }) {
+export default function ListAvatar({ width, src, alt }) {
   return (
     <ProfileImg
       $size={width}
@@ -19,7 +19,7 @@ export default function ListAvatar({ width, src }) {
     >
       <img
         src={src ? src : "/img/default-avatar.jpg"}
-        alt="profile image"
+        alt={alt ? alt : "avatar image"}
         className="overflow-hidden"
         width="111%"
         height="111%"

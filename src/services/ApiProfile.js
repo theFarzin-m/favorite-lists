@@ -70,7 +70,7 @@ export async function updateProfile({ id, newData, avatar }) {
 export async function getProfileLists(profileId) {
   const { data, error } = await supabase
     .from("list")
-    .select("*")
+    .select("*, belongTo(username, avatar, id)")
     .eq("belongTo", profileId);
 
   if (error) {
@@ -109,9 +109,9 @@ export async function getSubscriptions(profileId) {
   return data;
 }
 
-export async function manageSubscription({subscriberId, subscribedToId}) {
+export async function manageSubscription({ subscriberId, subscribedToId }) {
   // the best solution
-  const { data, error } = await supabase.rpc('manage_subscription', {
+  const { data, error } = await supabase.rpc("manage_subscription", {
     subscriber_id: subscriberId,
     subscribed_to_id: subscribedToId,
   });
@@ -123,4 +123,3 @@ export async function manageSubscription({subscriberId, subscribedToId}) {
 
   return data;
 }
-

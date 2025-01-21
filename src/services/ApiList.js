@@ -1,7 +1,33 @@
 import supabase from "./supabase";
 
-export async function getLists() {
-  const { data, error } = await supabase.from("list").select("*");
+export async function getLists(order) {
+  const { data, error } = await supabase
+    .from("list")
+    .select("*, belongTo(avatar, username, id)")
+    .order(order, { ascending: false });
+
+  if (error) {
+    console.error(error);
+    throw new Error("coudn't fetch lists");
+  }
+
+  return data;
+}
+
+export async function searchedListsApi({ asc, sort, time, query }) {
+  let queryBuilder = supabase
+    .from("list")
+    .select("*, belongTo(avatar, username, id)")
+    .order(sort, { ascending: asc })
+    .ilike("listName", `%${query}%`);
+
+  if (time !== "0") {
+    const fromDate = new Date();
+    fromDate.setDate(fromDate.getDate() - parseInt(time));
+    queryBuilder = queryBuilder.gte("created_at", fromDate.toISOString());
+  }
+
+  const { data, error } = await queryBuilder;
 
   if (error) {
     console.error(error);
@@ -12,20 +38,19 @@ export async function getLists() {
 }
 
 export async function getListsByProfileId(profileId) {
-  
   const { data, error } = await supabase
-  .from("list")
-  .select("*")
-  .eq("belongTo", profileId);
-  
+    .from("list")
+    .select("*,belongTo(username, id, avatar)")
+    .eq("belongTo", profileId)
+    .order("created_at", { ascending: false });
+
   if (error) {
     console.error(error);
     throw new Error("coudn't fetch lists");
   }
-  
 
-    return data;
-  }
+  return data;
+}
 
 export async function getAList(id) {
   let { data, error } = await supabase
@@ -152,6 +177,17 @@ export async function increaseViewApi(listId) {
   const { data, error } = await supabase.rpc("increase_view", {
     list_id: listId,
   });
+
+  if (error) {
+    console.error(error);
+    throw new Error("ERORR");
+  }
+
+  return data;
+}
+
+export async function deleteListApi(listId) {
+  const { data, error } = await supabase.from("list").delete().eq("id", listId);
 
   if (error) {
     console.error(error);

@@ -1,26 +1,68 @@
-import React, { lazy } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import supabase from "../services/supabase";
+
+import { addProfileId } from "../store/profile/profileSlice";
+
+import { useAuth } from "../features/authentication/useAuth";
 
 import Navbar from "./Navbar";
 import Sidebar from "./SideBar";
+import Loading from "./Loading";
+import styled from "styled-components";
 
-const Loading = lazy(() => import("./Loading"));
+const ApplayoutStyle = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  grid-template-rows: 1fr auto;
+  height: 100vh;
+
+  @media screen and (max-width: 768px) {
+    grid-template-rows: 1fr 50px;
+    grid-template-columns: 1fr;
+  }
+`;
 
 export default function Applayout() {
-  // if (true) return <Loading />;
+  const dispatch = useDispatch();
+  const { user, isLoading } = useAuth();
+
+  async function getCurrentProfile(userId) {
+    const { data, error } = await supabase
+      .from("profile")
+      .select("id")
+      .eq("user", userId)
+      .single();
+
+    if (error) {
+      console.log(error);
+      throw new Error("coudn't get profile");
+    }
+
+    await dispatch(addProfileId(data.id));
+  }
+
+  useEffect(() => {
+    if (!user) return;
+    let userId = user.id;
+    getCurrentProfile(userId);
+  }, [isLoading, user]);
+
+  if (isLoading) return <Loading />;
 
   return (
     <>
       <Navbar />
       <div className="container-xxl">
-        <div className="py-5 custom-applayout">
+        <ApplayoutStyle className="py-5">
+        <main className="px-lg-4 px-md-3 px-2 ">
+          <Outlet />
+        </main>
           <div className="">
             <Sidebar />
           </div>
-          <main className="px-lg-4 px-md-3 px-2 ">
-            <Outlet />
-          </main>
-        </div>
+        </ApplayoutStyle>
       </div>
     </>
   );

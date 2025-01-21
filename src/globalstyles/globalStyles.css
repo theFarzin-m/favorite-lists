@@ -21,6 +21,8 @@
 
     --shadow-inset: #333333;
 
+    --color-drop: #33333333;
+
     --scroll-thumb: #d9acf5;
     --scroll-track: #dddddd;
     --scroll-track-border: #333333;
@@ -33,6 +35,8 @@
     --bg-200: #393e46;
     --bg-300: #454e59;
     --shadow-inset: #dddddd;
+
+    --color-drop: #dddddd33;
 
     --border-hover: 238, 238, 238;
 
@@ -202,12 +206,7 @@ a {
 hr {
   background-color: var(--bg-300);
 }
-.custom-applayout {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  grid-template-rows: auto 1fr;
-  height: 100vh;
-}
+
 .custom-bg-primary-gradient {
   background-image: linear-gradient(
     to right,

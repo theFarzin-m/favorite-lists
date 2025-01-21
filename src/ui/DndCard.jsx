@@ -11,7 +11,7 @@ const CardBody = styled.div`
   }
 `;
 
-export default function DndCard({ table1, table2, setTable1, setTable2 }) {
+export default function DndCard({ table1, table2, setTable1, setTable2, handelDelete }) {
   const handleDragStart = (e, row) => {
     e.dataTransfer.setData("row", JSON.stringify(row));
   };
@@ -33,7 +33,7 @@ export default function DndCard({ table1, table2, setTable1, setTable2 }) {
 
     setTable2((prev) => {
       let tmp = [...prev];
-      tmp.splice(indexTaget, 0, row);
+      tmp.splice(indexTaget, -1, row);
       return tmp;
     });
   };
@@ -57,7 +57,7 @@ export default function DndCard({ table1, table2, setTable1, setTable2 }) {
             key={row.id}
             data-id={row.id}
           >
-            <ListItem item={row.id} />
+            <ListItem item={row.id} handelDelete={handelDelete} isList={tableName === "List"} />
           </li>
         ))}
       </CardBody>

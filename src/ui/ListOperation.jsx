@@ -1,16 +1,31 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import ListFilter from "./ListFilter";
 import SearchBox from "./SearchBox";
 
-export default function ListOperation() {
+export default function ListOperation({
+  setQuery,
+  query,
+  sort,
+  setSort,
+  time,
+  setTime,
+  setAsc
+}) {
   return (
     <div className="d-flex justify-content-between flex-wrap mb-4 mx-3">
-      <SearchBox size="lg" />
+      <SearchBox size="lg" query={query} setQuery={setQuery} />
 
       <div className="custom-centerize d-none d-md-flex mt-md-3 mt-0 mt-lg-0">
-        <ListFilter />
+        <ListFilter
+          sort={sort}
+          time={time}
+          setSort={setSort}
+          setTime={setTime}
+          setAsc={setAsc}
+        />
       </div>
-
+      {/* offcanvas for phone */}
       <div className="custom-centerize d-flex d-md-none justify-content-start">
         <button
           className="btn  bg-primary-clear text-dull"

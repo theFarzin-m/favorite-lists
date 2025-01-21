@@ -7,9 +7,9 @@ import { url } from "../../assets/variables";
 import { useCreateList } from "./useList";
 import toast from "react-hot-toast";
 import supabase from "../../services/supabase";
-import { useAuth } from "../authentication/useAuth";
 import DndCard from "../../ui/DndCard";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const CancelBtn = styled.button`
   border: 1px solid var(--primary-100);
@@ -39,17 +39,14 @@ const Input = styled.input`
 `;
 
 export default function CreateList() {
+  const { id: listId } = useParams();
+  const profileId = useSelector((s) => s.profile.profileId);
+  const { createList, isCreating } = useCreateList();
   const [query, setQuery] = useState("");
   const [listName, setListName] = useState("");
-  const { data, isPending } = useFetch(url + "s=" + query);
-  const [imdbID, setImdbID] = useState([]);
-  const { user, isLoading } = useAuth();
-  const [profile, setProfile] = useState({});
-  const { id } = profile;
-  const { id: listId } = useParams();
   const [table1, setTable1] = useState([]);
   const [table2, setTable2] = useState([]);
-  const { createList, isCreating } = useCreateList();
+  const { data, isPending } = useFetch(url + "s=" + query);
 
   useEffect(() => {
     if (!isPending && data.Response !== "True") return;
@@ -60,22 +57,11 @@ export default function CreateList() {
 
       setTable1(() => search);
     }
+  }, [data, isPending, query]);
 
-    async function getCurrentProfile(userId) {
-      const { data, error } = await supabase
-        .from("profile")
-        .select("*")
-        .eq("user", userId)
-        .single();
-
-      if (error) {
-        console.log(error);
-        throw new Error("coudn't get profile");
-      }
-
-      setProfile(data);
-    }
-
+  useEffect(() => {
+    setTable2([]);
+    setListName("");
     async function getList() {
       const { data, error } = await supabase
         .from("list")
@@ -94,15 +80,14 @@ export default function CreateList() {
       listItems = data.imdbID.reduce((acc, curr) => [...acc, { id: curr }], []);
       setTable2(listItems);
     }
-
-    if (!user) {
-      let userId = user.id;
-      getCurrentProfile(userId);
-    }
     if (listId) {
       getList();
     }
-  }, [data, isPending, query, user]);
+  }, [listId]);
+
+  const handelDelete = (imdbId) => {
+    setTable2((row) => row.filter((item) => item.id !== imdbId));
+  };
 
   const handelConfirm = () => {
     if (!table2 || !listName) {
@@ -112,7 +97,6 @@ export default function CreateList() {
     let selected = [];
     selected = table2.map((d) => d.id);
 
-    setImdbID(() => selected);
     let newList;
 
     if (listId) {
@@ -120,18 +104,17 @@ export default function CreateList() {
         listName: listName,
         imdbID: selected,
       };
-      createList({newList, listId});
+      createList({ newList, listId });
     } else {
       newList = {
         listName: listName,
         imdbID: selected,
         likes: 0,
         views: 0,
-        belongTo: profile.id,
+        belongTo: profileId,
       };
-      createList({newList});
+      createList({ newList });
     }
-
   };
 
   return (
@@ -165,6 +148,7 @@ export default function CreateList() {
           table2={table2}
           setTable1={setTable1}
           setTable2={setTable2}
+          handelDelete={handelDelete}
         />
       </div>
     </>

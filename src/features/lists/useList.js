@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   addBookmark as addBookmarkApi,
   createEditList,
+  deleteListApi,
   getAList,
   getBookmark,
   getLists,
@@ -12,19 +13,35 @@ import {
   increaseViewApi,
   manageLikes,
   removeBookmark as removeBookmarkApi,
+  searchedListsApi,
 } from "../../services/ApiList";
 
-export function useGetLists() {
+export function useGetLists(order = "created_at") {
   const {
     isLoading,
     data: lists,
     error,
   } = useQuery({
-    queryKey: ["list"],
-    queryFn: getLists,
+    queryKey: ["list", order],
+    queryFn: () => getLists(order),
   });
 
   return { isLoading, lists, error };
+}
+
+export function useSearchedLists(
+  order = "created_at",
+  asc = false,
+  query = "",
+  time = "0"
+) {
+  const queryClient = useQueryClient();
+  const { mutate: searchedLists, isPending } = useMutation({
+    mutationFn: searchedListsApi,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["list"] }),
+  });
+
+  return { searchedLists, isPending };
 }
 
 export function useGetListsByProfileId({ profileId }) {
@@ -153,13 +170,27 @@ export function useGetUserLists(userId) {
   return { bookmarks, error, isLoading };
 }
 
-
-export function useIncreaseView(){
-  const {mutate: increaseView, isPending} = useMutation({
+export function useIncreaseView() {
+  const { mutate: increaseView, isPending } = useMutation({
     mutationFn: increaseViewApi,
-    onSuccess: () => toast.success("view increase"),
-    onError: () => toast.error("view error")
-  })
+  });
 
-  return {increaseView, isPending}
+  return { increaseView, isPending };
+}
+
+export function useDeleteList() {
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteList, isPending } = useMutation({
+    mutationFn: deleteListApi,
+    onSuccess: () => {
+      toast.success("The list delete successfuly");
+      queryClient.invalidateQueries({
+        queryKey: ["list"],
+      });
+    },
+    onError: () => toast.error("error accourding delete list"),
+  });
+
+  return { deleteList, isPending };
 }

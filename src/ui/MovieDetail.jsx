@@ -7,6 +7,7 @@ export default function MovieDetail({ imdbID }) {
   const { data, isPending } = useFetch(url + "i=" + imdbID);
 
   if (isPending) return <SpinnerMini />;
+console.log(data);
 
   const {
     Title,
@@ -18,6 +19,8 @@ export default function MovieDetail({ imdbID }) {
     Plot,
     Actors,
     Director,
+    Writer,
+    Year,
   } = data;
 
   return (
@@ -28,6 +31,7 @@ export default function MovieDetail({ imdbID }) {
       <div className="card-body">
         <header>
           <div className="card-title fs-4"> {Title} </div>
+          <small>{Year}</small>
           <p>
             {Released} &bull; {Runtime}
           </p>
@@ -43,6 +47,7 @@ export default function MovieDetail({ imdbID }) {
           </p>
           <p> Staring: {Actors} </p>
           <p> Directed by {Director} </p>
+          <p> Write by {Writer} </p>
         </section>
       </div>
     </div>
