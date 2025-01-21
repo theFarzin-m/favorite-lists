@@ -8,7 +8,7 @@ import { addProfileId } from "../store/profile/profileSlice";
 import { useAuth } from "../features/authentication/useAuth";
 
 import Navbar from "./Navbar";
-import Sidebar from "./SideBar";
+import Sidebar from "./Sidebar";
 import Loading from "./Loading";
 import styled from "styled-components";
 
