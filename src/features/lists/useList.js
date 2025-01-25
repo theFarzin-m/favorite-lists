@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   addBookmark as addBookmarkApi,
   createEditList,
@@ -13,8 +13,9 @@ import {
   increaseViewApi,
   manageLikes,
   removeBookmark as removeBookmarkApi,
-  searchedListsApi,
+  searchedLists,
 } from "../../services/ApiList";
+import { useState } from "react";
 
 export function useGetLists(order = "created_at") {
   const {
@@ -29,19 +30,23 @@ export function useGetLists(order = "created_at") {
   return { isLoading, lists, error };
 }
 
-export function useSearchedLists(
-  order = "created_at",
-  asc = false,
-  query = "",
-  time = "0"
-) {
-  const queryClient = useQueryClient();
-  const { mutate: searchedLists, isPending } = useMutation({
-    mutationFn: searchedListsApi,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["list"] }),
+export function useSearchedLists() {
+  const [searchParams] = useSearchParams();
+  const q = searchParams.get("q") || "",
+    asc = searchParams.get("asc") || false,
+    sort = searchParams.get("sort") || "created_at",
+    time = searchParams.get("time") || "0";
+
+  const {
+    isLoading,
+    data: lists,
+    error,
+  } = useQuery({
+    queryKey: ["list", q, asc, sort, time],
+    queryFn: () => searchedLists(q, asc, sort, time),
   });
 
-  return { searchedLists, isPending };
+  return { isLoading, lists, error };
 }
 
 export function useGetListsByProfileId({ profileId }) {

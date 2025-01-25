@@ -8,7 +8,7 @@ import { useCreateList } from "./useList";
 import toast from "react-hot-toast";
 import supabase from "../../services/supabase";
 import DndCard from "../../ui/DndCard";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const CancelBtn = styled.button`
@@ -39,6 +39,7 @@ const Input = styled.input`
 `;
 
 export default function CreateList() {
+  const navigate = useNavigate();
   const { id: listId } = useParams();
   const profileId = useSelector((s) => s.profile.profileId);
   const { createList, isCreating } = useCreateList();
@@ -138,7 +139,7 @@ export default function CreateList() {
         >
           confirm
         </button>
-        <CancelBtn className="btn text-clear ms-3">Cancel</CancelBtn>
+        <CancelBtn className="btn text-clear ms-3" onClick={() => navigate(-1)}>Cancel</CancelBtn>
 
         <SearchBox size="md" query={query} setQuery={setQuery} />
       </div>

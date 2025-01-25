@@ -3,26 +3,13 @@ import React from "react";
 import ListFilter from "./ListFilter";
 import SearchBox from "./SearchBox";
 
-export default function ListOperation({
-  setQuery,
-  query,
-  sort,
-  setSort,
-  time,
-  setTime,
-  setAsc
-}) {
+export default function ListOperation() {
   return (
     <div className="d-flex justify-content-between flex-wrap mb-4 mx-3">
-      <SearchBox size="lg" query={query} setQuery={setQuery} />
+      <SearchBox size="lg" />
 
       <div className="custom-centerize d-none d-md-flex mt-md-3 mt-0 mt-lg-0">
         <ListFilter
-          sort={sort}
-          time={time}
-          setSort={setSort}
-          setTime={setTime}
-          setAsc={setAsc}
         />
       </div>
       {/* offcanvas for phone */}

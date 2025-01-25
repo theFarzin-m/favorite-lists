@@ -11,6 +11,7 @@ import styled from "styled-components";
 import { useGetListsByProfileId } from "../lists/useList";
 import { useSelector } from "react-redux";
 import { url } from "../../assets/variables";
+import { Spinner } from "react-bootstrap";
 
 // const data = [
 //   {
@@ -56,9 +57,11 @@ export default function Chart() {
   const profileId = useSelector((s) => s.profile.profileId);
   const { lists, isLoading } = useGetListsByProfileId({ profileId });
   const [data, setData] = useState([]);
+  const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
     const makeChartData = async (ids) => {
+      setIsPending(true);
       let tempData = []; // آرایه موقت برای جمع‌آوری داده‌ها
 
       for (const id of ids) {
@@ -80,6 +83,7 @@ export default function Chart() {
       // مرتب کردن و محدود کردن به 10 آیتم
       tempData.sort((a, b) => b.count - a.count);
       setData(tempData.slice(0, 10)); // به‌روزرسانی state تنها یک بار
+      setIsPending(false);
     };
 
     if (lists) {
@@ -92,24 +96,28 @@ export default function Chart() {
     <Box className="bg-focus custom-rounded-lg pt-2">
       <div className="fs-4 text-center">Most Ganre you use in Lists</div>
       <div className="custom-centerize h-100 ">
-        <ResponsiveContainer width="100%" height="100%">
-          <RadarChart
-            cx="50%"
-            cy="50%"
-            outerRadius="70%"
-            data={data.slice(0, 10)}
-          >
-            <PolarGrid />
-            <PolarAngleAxis dataKey="genre" />
-            <PolarRadiusAxis />
-            <Radar
-              dataKey="count"
-              stroke="#892cdc"
-              fill="#bc6ff1"
-              fillOpacity={0.5}
-            />
-          </RadarChart>
-        </ResponsiveContainer>
+        {isPending ? (
+          <Spinner />
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart
+              cx="50%"
+              cy="50%"
+              outerRadius="70%"
+              data={data.slice(0, 10)}
+            >
+              <PolarGrid />
+              <PolarAngleAxis dataKey="genre" />
+              <PolarRadiusAxis />
+              <Radar
+                dataKey="count"
+                stroke="#892cdc"
+                fill="#bc6ff1"
+                fillOpacity={0.5}
+              />
+            </RadarChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </Box>
   );

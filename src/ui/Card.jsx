@@ -4,11 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import ListAvatar from "./ListAvatar";
-import Menus from "./Menus";
 import ListItem from "./ListItem";
 import Modal from "./Modal";
 import ConfirmDelete from "./ConfirmDelete";
 import { useDeleteList } from "../features/lists/useList";
+import TooltipComponent from "./TooltipComponent";
 
 const CardStyle = styled.div`
   max-width: 300px !important;
@@ -17,7 +17,6 @@ const CardStyle = styled.div`
   @media screen and (max-width: 992px) {
     max-width: 100% !important;
   }
-
 `;
 const ScrollArrow = styled.div`
   left: 45%;
@@ -38,6 +37,7 @@ const ScrollArrow = styled.div`
 const CardBody = styled.div`
   height: 300px;
   overflow-y: auto;
+  overflow-x: hidden;
   & > li {
     border-color: 1px solid var(--bg-300) !important;
   }
@@ -69,53 +69,37 @@ export default function Card({ list }) {
     <CardStyle className="card bg-focus text-clear p-0 mx-md-auto mx-2">
       <div className="card-header d-flex justify-content-between align-items-center bg-focus">
         <Link to={`/explorer/list/${listId}`} className="custom-centerize">
-          <ListAvatar width="30px" src={belongTo.avatar} alt={`${belongTo.username} avatar`} />
+          <ListAvatar
+            width="30px"
+            src={belongTo.avatar}
+            alt={`${belongTo.username} avatar`}
+          />
           <span className="mx-2">{listName}</span>
         </Link>
-        <Modal>
-          <Modal.open opens={listId}>
-            <button className="btn">
-              <i className="bi bi-trash text-clear"></i>
-            </button>
-          </Modal.open>
-          <Modal.window name={listId}>
-            <ConfirmDelete
-              onConfirm={() => deleteList(listId)}
-              disabled={isPending}
-              resourceName={listName}
-            />
-          </Modal.window>
-        </Modal>
-
         {belongTo.id === profileId && (
-          <Menus>
-            <Menus.toggle toggleId={listId} />
-            <Menus.list listId={listId}>
-              <Menus.button
-                icon={<i className="bi bi-pencil-square text-clear"></i>}
-                onClick={() => navigate(`/create-list/${listId}`)}
-              >
-                Edite List
-              </Menus.button>
+          <div>
+            <Modal>
+              <Modal.open opens={listId}>
+                <button className="btn">
+                  <i className="bi bi-trash text-clear"></i>
+                </button>
+              </Modal.open>
+              <Modal.window name={listId}>
+                <ConfirmDelete
+                  onConfirm={() => deleteList(listId)}
+                  disabled={isPending}
+                  resourceName={listName}
+                />
+              </Modal.window>
+            </Modal>
 
-              <Modal>
-                <Modal.open opens={listId}>
-                  <Menus.button
-                    icon={<i className="bi bi-trash text-clear"></i>}
-                  >
-                    Delete
-                  </Menus.button>
-                </Modal.open>
-                <Modal.window name={listId}>
-                  <ConfirmDelete
-                    onConfirm={() => deleteList(listId)}
-                    disabled={isPending}
-                    resourceName={listName}
-                  />
-                </Modal.window>
-              </Modal>
-            </Menus.list>
-          </Menus>
+            <button
+              className="btn"
+              onClick={() => navigate(`/create-list/${listId}`)}
+            >
+              <i className="bi bi-pencil-square text-clear"></i>
+            </button>
+          </div>
         )}
       </div>
       <CardBody

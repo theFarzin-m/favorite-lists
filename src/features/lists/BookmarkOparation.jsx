@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import TooltipComponent from "../../ui/TooltipComponent";
 import { useParams } from "react-router-dom";
-import { useAuth } from "../authentication/useAuth";
 import supabase from "../../services/supabase";
 import { useAddBookmark, useRemoveBookmark } from "./useList";
 import { useSelector } from "react-redux";
@@ -53,7 +52,7 @@ export default function BookmarkOparation({ display }) {
   return (
     <TooltipComponent tooltipText="Bookmark" placement="top">
       <span
-        className={`custom-centerize flex-column mx-4 ${
+        className={`custom-centerize flex-column ${
           display ? "" : "d-none"
         }`}
         onClick={handelBookmark}

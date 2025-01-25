@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 
 const SearchInput = styled.input`
@@ -30,7 +31,20 @@ const SearchBoxStyle = styled.div`
   }
 `;
 
-export default function SearchBox({ size, query, setQuery }) {
+export default function SearchBox({ size }) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [query, setQuery] = useState("");
+
+  useEffect(() => {
+    setQuery(() => searchParams.get("q") || "");
+  }, [searchParams]);
+  const handelSerach = (e) => {
+    setQuery(() => e.target.value);
+    setSearchParams((prev) => {
+      prev.set("q", e.target.value);
+      return prev;
+    });
+  };
   return (
     <SearchBoxStyle className="col ms-3 custom-centerize custom-rounded-md">
       <span className="custom-centerize p-2">
@@ -41,7 +55,7 @@ export default function SearchBox({ size, query, setQuery }) {
         type="text"
         placeholder="Search..."
         aria-label=".form-control-lg example"
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => handelSerach(e)}
         value={query}
       />
     </SearchBoxStyle>

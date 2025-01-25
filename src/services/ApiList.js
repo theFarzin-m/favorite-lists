@@ -14,12 +14,13 @@ export async function getLists(order) {
   return data;
 }
 
-export async function searchedListsApi({ asc, sort, time, query }) {
+export async function searchedLists(q, asc, sort, time) {
+  const ascending = Boolean(asc === "true" || asc === true);
   let queryBuilder = supabase
     .from("list")
     .select("*, belongTo(avatar, username, id)")
-    .order(sort, { ascending: asc })
-    .ilike("listName", `%${query}%`);
+    .order(sort, { ascending: ascending })
+    .ilike("listName", `%${q}%`);
 
   if (time !== "0") {
     const fromDate = new Date();

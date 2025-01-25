@@ -10,6 +10,12 @@ const Item = styled.div`
   width: 100%;
 `;
 
+const ImagePlaceholder = styled.div`
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+`;
+
 export default function ListItem({
   item,
   handelDelete,
@@ -17,10 +23,10 @@ export default function ListItem({
   isList = false,
 }) {
   const { data, isPending } = useFetch(url + "i=" + item);
-  if (isPending) return <SpinnerMini />;
+
   return (
     <Item
-      className="bg-focus text-clear d-flex align-items-center justify-content-start w-100 my-2"
+      className="bg-focus text-clear w-100 my-2 placeholder-glow"
       onClick={onClick}
     >
       {isList && (
@@ -31,11 +37,28 @@ export default function ListItem({
           <i className="bi bi-trash"></i>
         </button>
       )}
-      <div className="d-flex align-items-center col">
-        <ListAvatar width="80px" src={data.Poster} />
-        <span className="me-2 text-truncate" >{data.Title}</span>
-      </div>
-        <div className="mx-2 col-4">({data.Year})</div>
+      {isPending ? (
+        <>
+          <div className="d-flex align-items-center">
+            <ImagePlaceholder className="custom-rounded-sm placeholder" />
+            <div className="mx-2 w-100">
+              <div className="text-truncate placeholder w-75"></div>
+              <br />
+              <div className="small placeholder w-25"></div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="d-flex align-items-center">
+            <ListAvatar width="80px" src={data.Poster} />
+            <div className="mx-2 w-50">
+              <div className="text-truncate">{data.Title}</div>
+              <div className="small">({data.Year})</div>
+            </div>
+          </div>
+        </>
+      )}
     </Item>
   );
 }

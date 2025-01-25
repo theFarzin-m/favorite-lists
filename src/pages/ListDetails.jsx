@@ -1,6 +1,6 @@
 import React, { lazy, useEffect, useState } from "react";
 import styled from "styled-components";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import Avatar from "../ui/Avatar";
 import Loading from "../ui/Loading";
@@ -28,7 +28,7 @@ const CardHead = styled.div`
 const WrapperOparations = styled.div`
   z-index: 0;
   position: relative;
-  width: ${(props) => (props.$sharing ? "70vw" : "20vw")};
+  width: ${(props) => (props.$sharing ? "70vw" : "30vw")};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,7 +53,7 @@ export default function ListDetails() {
 
   if (isLoading) return <Loading />;
 
-  const { listName, imdbID, likes, id } = list;
+  const { listName, imdbID, likes, id, views } = list;
   const { username, id: ProfileId, avatar } = list.belongTo;
 
   return (
@@ -65,6 +65,7 @@ export default function ListDetails() {
             sharing={sharing}
             likesCount={likes}
             listId={id}
+            views={views}
           />
         </WrapperOparations>
       </div>

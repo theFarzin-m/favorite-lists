@@ -1,6 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
-export default function ListFilter({ time, setTime, sort, setSort, setAsc }) {
+export default function ListFilter() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [time, setTime] = useState(() => searchParams.get("time") || "0");
+  const [sort, setSort] = useState(
+    () => searchParams.get("sort") || "created_at"
+  );
+  const [asc, setAsc] = useState(() => searchParams.get("asc") || false);
+
+  useEffect(() => {
+    setSearchParams({ time, sort, asc });
+  }, [asc, sort, time]);
+
   return (
     <>
       <div className="ms-lg-4 ms-md-2 mb-4 mb-md-0 text-nowrap">
