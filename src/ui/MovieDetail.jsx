@@ -7,7 +7,6 @@ export default function MovieDetail({ imdbID }) {
   const { data, isPending } = useFetch(url + "i=" + imdbID);
 
   if (isPending) return <SpinnerMini />;
-console.log(data);
 
   const {
     Title,
@@ -24,7 +23,7 @@ console.log(data);
   } = data;
 
   return (
-    <div className="card">
+    <div className="card bg-focus text-clear">
     <div className="px-5 pt-1">
       <img src={Poster} alt={`poster of ${Title}`} className="card-img-top" />
     </div>

@@ -17,7 +17,7 @@ export default function Operations({ setSharing, sharing, likesCount, views }) {
   const [display, setDisplay] = useState(true);
   const navigate = useNavigate();
 
-  const handelswitchshare = () => {
+  const handelswitchshare = (e) => {
     setSharing((s) => !s);
     setTimeout(() => setDisplay(!display), 200);
   };
@@ -46,23 +46,14 @@ export default function Operations({ setSharing, sharing, likesCount, views }) {
 
       <ShareButton text="check this list out!" display={display} />
 
-      {sharing ? (
+      <TooltipComponent tooltipText="Share" placement="top">
         <span
           className="custom-centerize flex-column"
           onClick={handelswitchshare}
         >
-          <i className="bi bi-x-lg fs-4"></i>
+          <i className={`bi ${sharing ? "bi-x-lg" : "bi-share"} fs-4`}></i>
         </span>
-      ) : (
-        <TooltipComponent tooltipText="Share" placement="top">
-          <span
-            className="custom-centerize flex-column"
-            onClick={handelswitchshare}
-          >
-            <i className="bi bi-share fs-4"></i>
-          </span>
-        </TooltipComponent>
-      )}
+      </TooltipComponent>
     </ListOparation>
   );
 }

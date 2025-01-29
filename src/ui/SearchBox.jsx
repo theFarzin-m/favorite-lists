@@ -38,6 +38,7 @@ export default function SearchBox({ size }) {
   useEffect(() => {
     setQuery(() => searchParams.get("q") || "");
   }, [searchParams]);
+
   const handelSerach = (e) => {
     setQuery(() => e.target.value);
     setSearchParams((prev) => {
@@ -45,6 +46,7 @@ export default function SearchBox({ size }) {
       return prev;
     });
   };
+  
   return (
     <SearchBoxStyle className="col ms-3 custom-centerize custom-rounded-md">
       <span className="custom-centerize p-2">

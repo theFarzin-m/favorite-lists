@@ -1,6 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  replace,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import {
   addBookmark as addBookmarkApi,
   createEditList,
@@ -73,7 +78,7 @@ export function useCreateList() {
       queryClient.invalidateQueries({
         queryKey: ["lists"],
       });
-      navigate(`/explorer/list/${data.id}`);
+      navigate(`/explorer/list/${data.id}`, { replace: true });
     },
     onError: (err) => {
       toast.error(err.message);

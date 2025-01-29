@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap");
-
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap');
 :root {
   &,
   &.light-mode {
@@ -51,6 +51,11 @@
   --border-radius-sm: 7px;
   --border-radius-md: 12px;
   --border-radius-lg: 15px;
+}
+.cinzel {
+  font-family: "Cinzel", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
 }
 .custom-rounded-lg {
   border-radius: var(--border-radius-lg);

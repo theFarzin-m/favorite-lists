@@ -8,7 +8,7 @@ import { useCreateList } from "./useList";
 import toast from "react-hot-toast";
 import supabase from "../../services/supabase";
 import DndCard from "../../ui/DndCard";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const CancelBtn = styled.button`
@@ -43,7 +43,8 @@ export default function CreateList() {
   const { id: listId } = useParams();
   const profileId = useSelector((s) => s.profile.profileId);
   const { createList, isCreating } = useCreateList();
-  const [query, setQuery] = useState("");
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("q") || "";
   const [listName, setListName] = useState("");
   const [table1, setTable1] = useState([]);
   const [table2, setTable2] = useState([]);
@@ -141,7 +142,7 @@ export default function CreateList() {
         </button>
         <CancelBtn className="btn text-clear ms-3" onClick={() => navigate(-1)}>Cancel</CancelBtn>
 
-        <SearchBox size="md" query={query} setQuery={setQuery} />
+        <SearchBox size="md" />
       </div>
       <div className="row">
         <DndCard

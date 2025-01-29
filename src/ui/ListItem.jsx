@@ -4,10 +4,10 @@ import styled from "styled-components";
 import ListAvatar from "./ListAvatar";
 import { useFetch } from "../hooks/usefetch";
 import { url } from "../assets/variables";
-import SpinnerMini from "./SpinnerMini";
 
 const Item = styled.div`
   width: 100%;
+  cursor: pointer;
 `;
 
 const ImagePlaceholder = styled.div`
@@ -34,7 +34,7 @@ export default function ListItem({
           className="btn position-absolute z-2 m-1 px-1 py-0 start-0 top-0"
           onClick={() => handelDelete(item)}
         >
-          <i className="bi bi-trash"></i>
+          <i className="bi bi-trash text-clear"></i>
         </button>
       )}
       {isPending ? (

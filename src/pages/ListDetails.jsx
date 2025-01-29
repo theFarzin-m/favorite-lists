@@ -1,6 +1,6 @@
 import React, { lazy, useEffect, useState } from "react";
 import styled from "styled-components";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, replace, useNavigate, useSearchParams } from "react-router-dom";
 
 import Avatar from "../ui/Avatar";
 import Loading from "../ui/Loading";
@@ -8,9 +8,11 @@ import ListItem from "../ui/ListItem";
 import { useGetList, useIncreaseView } from "../features/lists/useList";
 import Operations from "../features/lists/Operations";
 import MovieDetail from "../ui/MovieDetail";
+import { useSelector } from "react-redux";
 
 const CardBody = styled.div`
-  height: 400px;
+  height: 100%;
+  max-height: 60vh;
   overflow-y: auto;
   & > li {
     border-color: 1px solid var(--bg-300) !important;
@@ -19,6 +21,7 @@ const CardBody = styled.div`
 
 const EmptyCard = styled.div`
   opacity: 0.5;
+  min-height: 60vh;
 `;
 
 const CardHead = styled.div`
@@ -28,7 +31,8 @@ const CardHead = styled.div`
 const WrapperOparations = styled.div`
   z-index: 0;
   position: relative;
-  width: ${(props) => (props.$sharing ? "70vw" : "30vw")};
+  width: ${(props) => (props.$sharing ? "80vw" : "30vw")};
+  min-width: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,7 +43,10 @@ const WrapperOparations = styled.div`
 export default function ListDetails() {
   const [sharing, setSharing] = useState(false);
   const { list, isLoading } = useGetList();
-  const [selectedMovie, setSelectedMovie] = useState("");
+  const selectedID = useSelector((s) => s.list.selectedID);
+  console.log(selectedID);
+
+  const [selectedMovie, setSelectedMovie] = useState(selectedID || "");
   const { increaseView, isPending } = useIncreaseView();
 
   useEffect(() => {
@@ -69,58 +76,54 @@ export default function ListDetails() {
           />
         </WrapperOparations>
       </div>
-      <div className="row">
-        <div className="col-6">
-          <div className="row">
-            <div className="card col bg-focus text-clear p-0 mx-4">
-              <div>
-                <div className="card-header d-flex justify-content-between align-items-center bg-focus">
-                  <div className="ms-3 text-nowrap">
-                    <CardHead className="custom-centerize">
-                      <Link to={`/profile/${ProfileId}`}>
-                        <Avatar width="60px" src={avatar} />
-                      </Link>
-                      <span className="fs-5 me-2 text-truncate">
-                        {username}&apos;s <b>{listName}</b> favorites
-                      </span>
-                    </CardHead>
-                  </div>
+      <div className="row ">
+        <div className="col">
+          <div className="card bg-focus text-clear p-0 h-100">
+            <div>
+              <div className="card-header d-flex justify-content-between align-items-center bg-focus">
+                <div className="ms-3 text-nowrap">
+                  <CardHead className="custom-centerize">
+                    <Link to={`/profile/${ProfileId}`}>
+                      <Avatar width="60px" src={avatar} />
+                    </Link>
+                    <span className="fs-5 me-2 text-truncate">
+                      {username}&apos;s <b>{listName}</b> favorites
+                    </span>
+                  </CardHead>
                 </div>
-
-                <CardBody className="p-1 list-group-flush bg-bg">
-                  {imdbID.map((i) => (
-                    <ListItem
-                      item={i}
-                      key={i}
-                      onClick={() => setSelectedMovie(i)}
-                    />
-                  ))}
-                </CardBody>
               </div>
+
+              <CardBody className="p-1 list-group-flush bg-bg">
+                {imdbID.map((i) => (
+                  <ListItem
+                    item={i}
+                    key={i}
+                    onClick={() => setSelectedMovie(i)}
+                  />
+                ))}
+              </CardBody>
             </div>
           </div>
         </div>
-        <div className="col-6">
-          <div className="row">
-            <div className="card col bg-focus text-clear p-0 mx-4">
-              <div>
-                <div className="card-header d-flex justify-content-between align-items-center bg-focus">
-                  <div className="ms-3 text-nowrap">
-                    <CardHead className="custom-centerize fs-3 text-truncate">
-                      Movie/Tv show details
-                    </CardHead>
-                  </div>
+        <div className="col">
+          <div className="card bg-focus text-clear p-0">
+            <div>
+              <div className="card-header d-flex justify-content-between align-items-center bg-focus">
+                <div className="ms-3 text-nowrap">
+                  <CardHead className="custom-centerize fs-3 text-truncate">
+                    Movie/Tv show details
+                  </CardHead>
                 </div>
-                <CardBody className="p-1 list-group-flush bg-bg">
-                  {selectedMovie.length > 0 ? (
-                    <MovieDetail imdbID={selectedMovie} />
-                  ) : (
-                    <EmptyCard className="custom-centerize h-100">
-                      Click on Movie/Tv show for details
-                    </EmptyCard>
-                  )}
-                </CardBody>
               </div>
+              <CardBody className="p-1 list-group-flush bg-bg">
+                {selectedMovie.length > 0 ? (
+                  <MovieDetail imdbID={selectedMovie} />
+                ) : (
+                  <EmptyCard className="custom-centerize h-100">
+                    Click on Movie/Tv show for details
+                  </EmptyCard>
+                )}
+              </CardBody>
             </div>
           </div>
         </div>

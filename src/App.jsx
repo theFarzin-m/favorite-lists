@@ -17,6 +17,7 @@ import ListDetails from "./pages/ListDetails";
 import Login from "./pages/Login";
 import { Provider } from "react-redux";
 import store from "./store/store";
+import PageNotFound from "./pages/PageNotFound";
 
 // const Dashboard = lazy(() => import("./pages/Dashboard"));
 // const MyLists = lazy(() => import("./pages/MyLists"));
@@ -60,6 +61,7 @@ function App() {
               <Route path="profile/bookmark" element={<Bookmarks />} />
             </Route>
             <Route path="login" element={<Login />} />
+            <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>
 

@@ -4,6 +4,7 @@ import styled from "styled-components";
 const Container = styled.div`
   height: 100vh;
   width: 100vw;
+  background-color: var(--bg-100);
 `;
 
 const Loader = styled.div`
@@ -11,35 +12,37 @@ const Loader = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  width: 300px;
+  width: 500px;
 `;
 
 const LoaderText = styled.div`
   font-size: 50px;
-  color: rgb(0, 0, 0);
   margin-bottom: 20px;
-  align-self: center;
+  align-self: flex-start;
+  word-wrap: nowrap;
+  color: var(--text-100);
+  font-weight: 600;
   &::after {
     content: ".";
     animation: dots 3s infinite;
   }
 
   @keyframes dots {
-    0%{
+    0% {
       content: "";
-    }    
-    30%{
+    }
+    30% {
       content: ".";
-    } 
-    60%{
+    }
+    60% {
       content: "..";
-    } 
-    90%{
+    }
+    90% {
       content: "...";
-    } 
-    100%{
+    }
+    100% {
       content: "...";
-    } 
+    }
   }
 `;
 
@@ -62,7 +65,7 @@ const LoaderTruck = styled.div`
   width: 30%;
   height: 10px;
   border-radius: 5px;
-  background-color: var(--text-100);
+  background-color: var(--text-200);
   animation: loader-bar-animation 3s ease-in-out infinite;
 
   @keyframes loader-bar-animation {
@@ -87,7 +90,7 @@ export default function Loading() {
   return (
     <Container className="custom-centerize bg-bg text-clear">
       <Loader>
-        <LoaderText>Loading</LoaderText>
+        <LoaderText className="cinzel">Data Is Coming</LoaderText>
         <LoaderBar>
           <LoaderTruck></LoaderTruck>
         </LoaderBar>

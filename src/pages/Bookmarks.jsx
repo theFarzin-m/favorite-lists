@@ -4,6 +4,8 @@ import Card from "../ui/Card";
 import { useSelector } from "react-redux";
 import supabase from "../services/supabase";
 
+import Empty from "../ui/Empty"
+
 export default function Bookmarks() {
   const profileId = useSelector((s) => s.profile.profileId);
   const [lists, setLists] = useState(null);
@@ -39,7 +41,7 @@ export default function Bookmarks() {
     <>
       <ListOperation />
       <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        {lists.map((list) => (
+        {lists.length < 1 ? <Empty /> : lists.map((list) => (
           <Card list={list.list} key={list.list.id} />
         ))}
       </div>

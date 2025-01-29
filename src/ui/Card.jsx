@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+
+import { selectMovie } from "../store/list/listSlice";
 
 import ListAvatar from "./ListAvatar";
 import ListItem from "./ListItem";
 import Modal from "./Modal";
 import ConfirmDelete from "./ConfirmDelete";
 import { useDeleteList } from "../features/lists/useList";
-import TooltipComponent from "./TooltipComponent";
 
 const CardStyle = styled.div`
   max-width: 300px !important;
@@ -49,6 +50,7 @@ export default function Card({ list }) {
   const { deleteList, isPending } = useDeleteList();
   const profileId = useSelector((s) => s.profile.profileId);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { id: listId, belongTo, listName, imdbID } = list;
 
@@ -66,7 +68,7 @@ export default function Card({ list }) {
   };
 
   return (
-    <CardStyle className="card bg-focus text-clear p-0 mx-md-auto mx-2">
+    <CardStyle className="card bg-focus text-clear p-0 mx-md-auto">
       <div className="card-header d-flex justify-content-between align-items-center bg-focus">
         <Link to={`/explorer/list/${listId}`} className="custom-centerize">
           <ListAvatar
@@ -115,7 +117,14 @@ export default function Card({ list }) {
         </ScrollArrow>
 
         {imdbID.map((id) => (
-          <ListItem key={id} item={id} />
+          <ListItem
+            key={id}
+            item={id}
+            onClick={() => {
+              dispatch(selectMovie(id));
+              navigate(`/explorer/list/${listId}`);
+            }}
+          />
         ))}
 
         <ScrollArrow

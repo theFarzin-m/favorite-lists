@@ -1,9 +1,10 @@
-/* eslint-disable react/prop-types */
 import React from "react";
+import { Link } from "react-router-dom";
 
 import Avatar from "../../ui/Avatar";
 import { timeDiff } from "../../utils/helpers";
-import { Link } from "react-router-dom";
+
+
 
 export default function RecentListItems({ list }) {
   const timeAgo = timeDiff(list.created_at);
@@ -16,7 +17,7 @@ export default function RecentListItems({ list }) {
           <span className="me-2">{list.listName}</span>
         </Link>
       </div>
-      <div>
+      <div className="">
         <span className="mx-2">
           <i className="bi bi-suit-heart"></i> <span>{list.likes}</span>
         </span>

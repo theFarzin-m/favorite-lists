@@ -20,7 +20,7 @@ export default function Subscriptions() {
         />
       )}
       <hr />
-      {selected && <ListRow profileId={selected} />}
+      {selected &&  <ListRow profileId={selected} />}
     </>
   );
 }

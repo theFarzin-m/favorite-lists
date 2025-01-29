@@ -114,7 +114,6 @@ export default function EditProfile({ editeData = {}, toggleEdit }) {
           <button className="btn bg-primary-clear text-dull ms-3">
             confirm
           </button>
-          <ResetButton onClick={reset} />
         </div>
       </form>
     </>
