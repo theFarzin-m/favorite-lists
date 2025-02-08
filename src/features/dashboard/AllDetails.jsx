@@ -20,6 +20,8 @@ export default function AllDetails() {
 
   useEffect(() => {
     const countRecivers = (data) => {
+      setLikes(0)
+      setViews(0)
       data.map((list) => {
         setLikes((l) => l + list.likes);
         setViews((v) => v + list.views);

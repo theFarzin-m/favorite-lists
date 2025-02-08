@@ -10,6 +10,7 @@ import supabase from "../../services/supabase";
 import DndCard from "../../ui/DndCard";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import PhoneCreateRow from "../../ui/PhoneCreateRow";
 
 const CancelBtn = styled.button`
   border: 1px solid var(--primary-100);
@@ -55,11 +56,12 @@ export default function CreateList() {
     if (query.length > 3 && data && data.Search) {
       const search = data.Search.map((d) => ({
         id: d.imdbID,
+        isChecked: table2.includes(d.imdbID),
       }));
 
       setTable1(() => search);
     }
-  }, [data, isPending, query]);
+  }, [data, isPending, query, table2]);
 
   useEffect(() => {
     setTable2([]);
@@ -87,12 +89,8 @@ export default function CreateList() {
     }
   }, [listId]);
 
-  const handelDelete = (imdbId) => {
-    setTable2((row) => row.filter((item) => item.id !== imdbId));
-  };
-
   const handelConfirm = () => {
-    if (!table2 || !listName) {
+    if (!table2.length > 0 || !listName) {
       toast.error("pleas drag and drop some movies and select a name");
       return;
     }
@@ -100,7 +98,7 @@ export default function CreateList() {
     selected = table2.map((d) => d.id);
 
     let newList;
-
+    
     if (listId) {
       newList = {
         listName: listName,
@@ -119,10 +117,34 @@ export default function CreateList() {
     }
   };
 
+  const handelDelete = (imdbId) => {
+    setTable2((row) => row.filter((item) => item !== imdbId));
+  };
+
+  const handelAdd = (imdbID) => {
+    setTable2((prev) => {
+      var tmp = prev.includes(imdbID)
+        ? prev.filter((item) => item.id !== imdbID)
+        : [...prev, {id: imdbID}];
+
+      return tmp;
+    });
+  };
+
+  const handelMoving = (imdbID, toTop) => {
+    setTable2((prev) => {
+      const index = prev.indexOf(imdbID);
+      const dir = toTop ? index - 1 : index + 1;
+      let tmp = prev.filter((i) => i !== imdbID);
+      tmp.splice(dir, 0, imdbID);
+      return tmp;
+    });
+  };
+
   return (
     <>
-      <div className="d-flex align-items-end justify-content-start mb-4">
-        <label className="label-control">
+      <div className="d-flex align-items-end justify-content-start mb-4 flex-wrap">
+        <label className="label-control mb-2 mb-lg-0">
           <span className="mb-2 fs-5">List Title:</span>
           <Input
             className="form-control bg-bg"
@@ -134,17 +156,58 @@ export default function CreateList() {
           />
         </label>
         <button
-          className="btn bg-primary-clear text-dull mx-3"
+          className="btn bg-primary-clear text-dull mx-3 mb-2 mb-lg-0"
           onClick={handelConfirm}
           disabled={isCreating}
         >
           confirm
         </button>
-        <CancelBtn className="btn text-clear ms-3" onClick={() => navigate(-1)}>Cancel</CancelBtn>
+        <CancelBtn className="btn text-clear ms-3 mb-2 mb-lg-0" onClick={() => navigate(-1)}>
+          Cancel
+        </CancelBtn>
 
         <SearchBox size="md" />
       </div>
-      <div className="row">
+      <div
+        className="row border flex-nowrap rounded p-2 mx-2 d-lg-none"
+        style={{ minHeight: "250px", overflowX: "auto" }}
+      >
+        {table2.length > 0 ? (
+          table2.map((item, i) => (
+            <PhoneCreateRow
+              isList={true}
+              key={item.id}
+              item={item.id}
+              handelDelete={handelDelete}
+              handelMoving={handelMoving}
+              isFirst={i === 0}
+              isLast={i + 1 === table2.length}
+            />
+          ))
+        ) : (
+          <p className="text-secondary">Your list is Empty</p>
+        )}
+      </div>
+
+      <div
+        className="row border flex-nowrap rounded p-2 mt-3 mx-2 d-lg-none"
+        style={{ minHeight: "250px", overflowX: "auto" }}
+      >
+        {table1.length > 0 ? (
+          table1.map((item) => (
+            <PhoneCreateRow
+              isList={false}
+              key={item.id}
+              item={item.id}
+              handelAdd={handelAdd}
+              isChecked={item.isChecked}
+            />
+          ))
+        ) : (
+          <p className="text-secondary">Search somthing</p>
+        )}
+      </div>
+      <div className="row d-none d-lg-flex">
         <DndCard
           table1={table1}
           table2={table2}

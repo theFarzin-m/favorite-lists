@@ -26,14 +26,14 @@ export default function DndCard({ table1, table2, setTable1, setTable2, handelDe
     const rowTarget = e.target.closest("li");
     if (rowTarget) {
       var targetId = rowTarget.dataset.id
-      var indexTaget = table2.findIndex((x) => x.id == targetId);
+      var indexTarget = table2.findIndex((x) => x.id == targetId);
     }
 
     setTable2((prev) => prev.filter((r) => r.id !== row.id));
 
     setTable2((prev) => {
       let tmp = [...prev];
-      tmp.splice(indexTaget, -1, row);
+      tmp.splice(indexTarget, -1, row);
       return tmp;
     });
   };

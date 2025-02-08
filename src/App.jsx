@@ -18,6 +18,7 @@ import Login from "./pages/Login";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import PageNotFound from "./pages/PageNotFound";
+import Test from "./pages/Test";
 
 // const Dashboard = lazy(() => import("./pages/Dashboard"));
 // const MyLists = lazy(() => import("./pages/MyLists"));
@@ -55,6 +56,7 @@ function App() {
               <Route path="subscriptions" element={<Subscriptions />} />
               <Route path="create-list/:id" element={<CreateListPage />} />
               <Route path="create-list" element={<CreateListPage />} />
+              <Route path="test" element={<Test />} />
               <Route path="explorer" element={<Explorer />} />
               <Route path="explorer/list/:id" element={<ListDetails />} />
               <Route path="profile/:profileId" element={<Profile />} />
