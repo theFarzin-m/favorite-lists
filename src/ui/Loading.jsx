@@ -12,11 +12,12 @@ const Loader = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  width: 500px;
+  width: 90%;
+  max-width: 500px;
 `;
 
 const LoaderText = styled.div`
-  font-size: 50px;
+  font-size: calc(2rem + 1vw);
   margin-bottom: 20px;
   align-self: flex-start;
   word-wrap: nowrap;

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 
 import Card from "../ui/Card";
 import ListOperation from "../ui/ListOperation";
 import Loading from "../ui/Loading";
 import { useSearchedLists } from "../features/lists/useList";
-import EmptySearch from "../ui/EmptySearch";
+import Empty from "../ui/Empty";
 
 export default function Explorer() {
   const { lists, isLoading } = useSearchedLists();
@@ -15,7 +15,7 @@ export default function Explorer() {
       {isLoading ? (
         <Loading />
       ) : lists.length < 1? (
-        <EmptySearch />
+        <Empty subTitle={"Try Diffrent Words and Filter"} title="Noting Found" />
       ) : (
         <div className="row g-4 mx-0 w-100">
           {lists?.map((list) => (

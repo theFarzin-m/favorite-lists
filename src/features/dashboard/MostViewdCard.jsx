@@ -17,7 +17,7 @@ export default function MostViewdCard() {
       <div className="card-body">
         <h5 className="card-title">Most viewed Lists</h5>
         {lists.length < 1 ? 
-        <Empty />
+        <Empty title="this list is Empty" size="small" />
          :
         <ul className="bg-focus border-0 text-clear mb-2 p-0">
           {lists.slice(0, 5).map((list) => (

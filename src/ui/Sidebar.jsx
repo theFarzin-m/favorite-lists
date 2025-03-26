@@ -11,10 +11,10 @@ const SidebarStyle = styled.div`
   border-left: 1px solid var(--bg-300) !important;
 
   @media screen and (max-width: 992px) {
-    width: 100%;
     position: fixed;
-    bottom: 0;
-    height: 50px;
+    width: 100%;
+    bottom: env(safe-area-inset-bottom, 0);
+    height: 60px;
     border-left: none;
     border-top: 1px solid var(--bg-300) !important;
     background-color: var(--bg-100);
@@ -31,9 +31,9 @@ export default function Sidebar() {
   const { id, username, fullname, avatar } = profile;
 
   return (
-    <SidebarStyle className="sidebar pb-lg-3 p-1 px-2 px-lg-0 d-flex justify-content-between align-items-center align-items-lg-start w-100">
+    <SidebarStyle className="sidebar pb-lg-3 p-1 px-2 px-lg-0 d-lg-flex justify-content-between  align-items-center align-items-lg-start w-100">
       <div className="d-flex justify-content-lg-end justify-content-between align-items-center flex-row flex-lg-column w-100">
-        <div className="custom-centerize flex-column">
+        <div className="custom-centerize flex-column mb-lg-4">
           <NavLink to={`/profile/${id}`}>
             {window.innerWidth < 992 ? (
               <Avatar width="40px" src={avatar} />

@@ -14,9 +14,14 @@ export function useSignup() {
   const navigate = useNavigate();
   const { mutate: singup, isLoading } = useMutation({
     mutationFn: signupApi,
-    onSuccess: () => {
-      toast.success("user create successfully");
-      navigate("/");
+    onSuccess: (data) => {
+      toast.success("please confirm your email address to login");
+      console.log(data);
+      navigate(`/`);
+    },
+    onError: (err) => {
+      console.log(err.message);
+      toast.error(err.message);
     },
   });
 
@@ -37,7 +42,7 @@ export function useLogin() {
 
     onError: (err) => {
       console.error(err);
-      toast.error("Email or Passeord is incorrect");
+      toast.error(err.message);
     },
   });
 

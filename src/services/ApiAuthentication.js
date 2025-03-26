@@ -1,23 +1,24 @@
 import supabase from "./supabase";
 
 export async function signupApi({ email, password, username, fullname }) {
-  let { data, error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
   });
 
-  if (error) throw new Error(error.message);
-  console.log(data.id);
-  
-  const {error: error2} = await supabase.from("profile").insert({
-    fullname,
-    username,
-    avatar: "",
-    bio: "",
-    user: data.id,
-  })
-
-  if(error2) throw new Error(error2.message)
+  if (error) throw new Error(error);
+  const { error: error2 } = await supabase
+    .from("profile")
+    .insert({
+      fullname,
+      username,
+      avatar: "",
+      bio: "",
+      user: data.user.id,
+    })
+    .select()
+    .single();
+  if (error2) throw new Error(error2);
 
   return data;
 }
@@ -62,6 +63,6 @@ export async function updateUserApi({ email, password }) {
 
   if (error) throw new Error(error.message);
   console.log(data);
-  
+
   return data;
 }

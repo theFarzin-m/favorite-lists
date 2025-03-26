@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
+import { Provider } from "react-redux";
 
 import ProtectedRoute from "./ui/ProtectedRoute";
 import Applayout from "./ui/Applayout";
@@ -15,7 +16,6 @@ import CreateListPage from "./pages/CreateListPage";
 import Bookmarks from "./pages/Bookmarks";
 import ListDetails from "./pages/ListDetails";
 import Login from "./pages/Login";
-import { Provider } from "react-redux";
 import store from "./store/store";
 import PageNotFound from "./pages/PageNotFound";
 import Test from "./pages/Test";

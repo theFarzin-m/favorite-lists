@@ -12,6 +12,8 @@ const CardText = styled.div`
   aspect-ratio: 4/1;
 `;
 
+const emptyData = []
+
 export default function AllDetails() {
   const profileId = useSelector((s) => s.profile.profileId);
   const { lists, isLoading } = useGetListsByProfileId({ profileId });

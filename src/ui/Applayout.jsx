@@ -16,7 +16,7 @@ const ApplayoutStyle = styled.div`
   display: grid;
   grid-template-columns: 1fr 200px;
   grid-template-rows: 1fr auto;
-  height: 100vh;
+  height: 100%;
 
   @media screen and (max-width: 992px) {
     grid-template-rows: 1fr 50px;
@@ -54,8 +54,8 @@ export default function Applayout() {
   return (
     <>
       <Navbar />
-      <ApplayoutStyle className="py-5">
-        <main className="px-lg-4 px-md-3 px-2 ">
+      <ApplayoutStyle className="pt-4">
+        <main className="px-lg-4 px-md-3 px-2 mb-4 mb-lg-0">
           <Outlet />
         </main>
         <div className="">
