@@ -93,6 +93,9 @@ export default function CreateList() {
     if (!table2.length > 0 || !listName) {
       toast.error("pleas drag and drop some movies and select a name");
       return;
+    } else if (table2.length > 10) {
+      toast.error("yourt list cannot be more than 10 movies or series");
+      return;
     }
     let selected = [];
     selected = table2.map((d) => d.id);
@@ -122,17 +125,13 @@ export default function CreateList() {
   };
 
   const handelAdd = (imdbID) => {
-    if (table2.length >= 10) {
-      toast.error("You can only add 10 movies to your list");
-    } else {
-      setTable2((prev) => {
-        var tmp = prev.includes(imdbID)
-          ? prev.filter((item) => item.id !== imdbID)
-          : [...prev, { id: imdbID }];
+    setTable2((prev) => {
+      var tmp = prev.includes(imdbID)
+        ? prev.filter((item) => item.id !== imdbID)
+        : [...prev, { id: imdbID }];
 
-        return tmp;
-      });
-    }
+      return tmp;
+    });
   };
 
   const handelMoving = (imdbID, toTop) => {
