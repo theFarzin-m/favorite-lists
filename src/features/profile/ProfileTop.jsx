@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 
@@ -8,6 +8,8 @@ import Loading from "../../ui/Loading";
 import { useGetProfile } from "./useProfile";
 import OwenedOperation from "./OwenedOperation";
 import SubscriptionBtn from "./SubscriptionBtn";
+import { useGetListsByProfileId } from "../lists/useList";
+import SpinnerMini from "../../ui/SpinnerMini";
 
 const OperationProfile = styled.div`
   border: 2px solid var(--primary-100);
@@ -21,9 +23,11 @@ export default function ProfileTop() {
   const { profileId } = useParams();
   const { user } = useAuth();
   const { data, isLoading } = useGetProfile(profileId);
-
+  const { lists, isLoading: listLoading } = useGetListsByProfileId({
+    profileId,
+  });
   if (isLoading) return <Loading />;
-  
+
   const userId = user.id;
 
   const {
@@ -47,18 +51,18 @@ export default function ProfileTop() {
       <div className="w-100">
         <div className="d-flex justify-content-evenly align-items-center mt-4 w-100">
           <div className="custom-centerize flex-column fs-1">
-            <div>24</div>
+            <div>{listLoading ? <SpinnerMini /> : lists.length}</div>
             <div>Lists</div>
           </div>
           <Link
             to="/profile/subscriptions"
             className="custom-centerize flex-column fs-1"
           >
-            <div>{subscriptions}</div>
+            <div>{isLoading ? <SpinnerMini /> : subscriptions}</div>
             <div>Subscriptions</div>
           </Link>
           <div className="custom-centerize flex-column fs-1">
-            <div>{subscribers}</div>
+            <div>{isLoading ? <SpinnerMini /> : subscribers}</div>
             <div>Subscribers</div>
           </div>
         </div>
