@@ -118,7 +118,7 @@ export default function CreateList() {
   };
 
   const handelDelete = (imdbId) => {
-    setTable2((row) => row.filter((item) => item !== imdbId));
+    setTable2((row) => row.filter((item) => item.id !== imdbId));
   };
 
   const handelAdd = (imdbID) => {
