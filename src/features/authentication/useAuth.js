@@ -75,7 +75,8 @@ export function useUserUpdate() {
     // @ts-ignore
     mutationFn: updateUserApi,
     onSuccess: () => {
-      toast.success("confirm changes email send to your email");
+      toast.success("confirm changes send to your email.");
+      toast.warning("check your email");
       queryClient.invalidateQueries({
         queryKey: ["user"],
       });
