@@ -98,7 +98,7 @@ export default function CreateList() {
     selected = table2.map((d) => d.id);
 
     let newList;
-    
+
     if (listId) {
       newList = {
         listName: listName,
@@ -122,13 +122,17 @@ export default function CreateList() {
   };
 
   const handelAdd = (imdbID) => {
-    setTable2((prev) => {
-      var tmp = prev.includes(imdbID)
-        ? prev.filter((item) => item.id !== imdbID)
-        : [...prev, {id: imdbID}];
+    if (table2.length >= 10) {
+      toast.error("You can only add 10 movies to your list");
+    } else {
+      setTable2((prev) => {
+        var tmp = prev.includes(imdbID)
+          ? prev.filter((item) => item.id !== imdbID)
+          : [...prev, { id: imdbID }];
 
-      return tmp;
-    });
+        return tmp;
+      });
+    }
   };
 
   const handelMoving = (imdbID, toTop) => {
@@ -162,7 +166,10 @@ export default function CreateList() {
         >
           confirm
         </button>
-        <CancelBtn className="btn text-clear ms-3 mb-2 mb-lg-0" onClick={() => navigate(-1)}>
+        <CancelBtn
+          className="btn text-clear ms-3 mb-2 mb-lg-0"
+          onClick={() => navigate(-1)}
+        >
           Cancel
         </CancelBtn>
 
