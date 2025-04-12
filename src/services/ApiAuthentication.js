@@ -54,15 +54,16 @@ export async function LogoutApi() {
 }
 
 export async function updateUserApi({ email, password }) {
+  console.log(email, password);
+
   // update password or fullname and avatar
-  let updateData;
-  if (password) updateData = { email, password };
-  if (email) updateData = { email };
+  const updateData = {};
+  if (email) updateData.email = email;
+  if (password) updateData.password = password;
 
   const { data, error } = await supabase.auth.updateUser(updateData);
 
   if (error) throw new Error(error.message);
-  console.log(data);
 
   return data;
 }

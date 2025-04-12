@@ -94,7 +94,6 @@ export async function createEditList({ newList, listId }) {
       console.error(error);
       throw new Error("coudn't update list");
     }
-    console.log(data);
     return data;
   } else {
     const { data, error } = await supabase

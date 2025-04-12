@@ -44,7 +44,6 @@ export default function ListDetails() {
   const [sharing, setSharing] = useState(false);
   const { list, isLoading } = useGetList();
   const selectedID = useSelector((s) => s.list.selectedID);
-  console.log(selectedID);
 
   const [selectedMovie, setSelectedMovie] = useState(selectedID || "");
   const { increaseView, isPending } = useIncreaseView();

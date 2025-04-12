@@ -5,7 +5,7 @@ import EditProfile from "./EditProfile";
 import EditUser from "../authentication/EditUser";
 import { Link } from "react-router-dom";
 
-export default function OwenedOperation({data}) {
+export default function OwenedOperation({ data }) {
   const [isEditUser, setIsEditeUser] = useState(false);
   const { logout, isLoading: isLoagouting } = useLogout();
 
@@ -18,7 +18,8 @@ export default function OwenedOperation({data}) {
         data-bs-target="#edit-profile"
         aria-controls="edit-profile"
       >
-        <i className="bi bi-pencil-square ms-2"></i>Edite
+        <i className="bi bi-pencil-square ms-2"></i>
+        <span className="d-none d-sm-inline">Edite</span>
       </button>
       <div
         className="modal fade px-3 "
@@ -53,13 +54,15 @@ export default function OwenedOperation({data}) {
         to="/profile/bookmark"
         className="btn bg-focus w-50 rounded-0 text-clear mx-1"
       >
-        <i className="bi bi-box-bookmark ms-2"></i>Bookmarks
+        <i className="bi bi-bookmarks ms-2"></i>
+        <span className="d-none d-sm-inline">Bookmarks</span>
       </Link>
       <button
         className="btn bg-focus w-50 custom-rounded-md rounded-end-0 text-clear"
         onClick={logout}
       >
-        <i className="bi bi-box-arrow-right ms-2"></i>Logout
+        <i className="bi bi-box-arrow-right ms-2"></i>
+        <span className="d-none d-sm-inline">Logout</span>
       </button>
     </>
   );

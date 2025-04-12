@@ -43,25 +43,25 @@ export default function ProfileTop() {
   return (
     <div className="d-flex align-items-start justify-content-between">
       <div className="custom-centerize flex-column">
-        <Avatar width="200px" src={avatar} />
+        <Avatar width="calc(100px + 8vw)" src={avatar} />
         <span className="fs-3">{username}</span>
         <small className="text-secondary">{fullname}</small>
         <div className="fs-5">{bio}</div>
       </div>
       <div className="w-100">
         <div className="d-flex justify-content-evenly align-items-center mt-4 w-100">
-          <div className="custom-centerize flex-column fs-1">
+          <div className="custom-centerize flex-column fs-1-custom">
             <div>{listLoading ? <SpinnerMini /> : lists.length}</div>
             <div>Lists</div>
           </div>
           <Link
             to="/profile/subscriptions"
-            className="custom-centerize flex-column fs-1"
+            className="custom-centerize flex-column fs-1-custom"
           >
             <div>{isLoading ? <SpinnerMini /> : subscriptions}</div>
             <div>Subscriptions</div>
           </Link>
-          <div className="custom-centerize flex-column fs-1">
+          <div className="custom-centerize flex-column fs-1-custom">
             <div>{isLoading ? <SpinnerMini /> : subscribers}</div>
             <div>Subscribers</div>
           </div>

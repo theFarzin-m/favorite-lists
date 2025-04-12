@@ -20,7 +20,7 @@ export default function EditUser({ toggleEdit }) {
   const { errors } = formState;
 
   const handelAction = (data) => {
-    userUpdate({ email: data.email, password: data.password });
+    userUpdate({ email: data.email, password: data.newPassword });
   };
 
   const handelErrors = (err) => {
@@ -32,7 +32,6 @@ export default function EditUser({ toggleEdit }) {
       <div className="h4 bg-focus text-clear"> Change Password </div>
       <form onSubmit={handleSubmit(handelAction, handelErrors)}>
         <FormRow label="Email:" error={errors?.email?.message} isRequerd={true}>
-          <EyeSlash Show={showPassword} setShow={setShowPassword} />
           <input
             type="email"
             className="form-control rounded-0 rounded-start border-0 bg-bg"

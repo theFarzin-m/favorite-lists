@@ -253,3 +253,12 @@ small {
 button:disabled {
   cursor: not-allowed;
 }
+
+.fs-1-custom {
+  font-size: calc(2rem + 0.3vw);
+}
+ @media screen and (max-width:768px ) {
+  .fs-1-custom {
+    font-size: calc(1rem + 0.3vw);
+  }
+ }

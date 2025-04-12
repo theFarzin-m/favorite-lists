@@ -45,7 +45,6 @@ const CardBody = styled.div`
 `;
 
 export default function Card({ list }) {
-  console.log(list);
   
   const [scrollUp, setScrollUp] = useState(false);
   const [scrollDown, setScrollDown] = useState(true);

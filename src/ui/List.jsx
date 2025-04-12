@@ -80,20 +80,16 @@ export default function List({ DATA, setDATA }) {
     };
 
     if (result.destination.droppableId === "list") {
-      if (result.source.droppabledId === "list") {
-        console.log("83");
-      } else {
-        setDATA((prevData) => {
-          setIsLoading(true);
-          const newData = [...prevData]; // ایجاد یک کپی جدید از state
-          const newItems = [...newData[1].items, { id: draggableId }];
-          newData[1] = {
-            ...newData[1], // کپی از اولین آیتم
-            items: newItems, // به‌روزرسانی بخش مورد نظر
-          };
-          return newData;
-        });
-      }
+      setDATA((prevData) => {
+        setIsLoading(true);
+        const newData = [...prevData]; // ایجاد یک کپی جدید از state
+        const newItems = [...newData[1].items, { id: draggableId }];
+        newData[1] = {
+          ...newData[1], // کپی از اولین آیتم
+          items: newItems, // به‌روزرسانی بخش مورد نظر
+        };
+        return newData;
+      });
     }
     setItems(workValue);
   };
