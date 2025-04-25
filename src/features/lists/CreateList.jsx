@@ -56,7 +56,7 @@ export default function CreateList() {
     if (query.length > 3 && data && data.Search) {
       const search = data.Search.map((d) => ({
         id: d.imdbID,
-        isChecked: table2.includes(d.imdbID),
+        isChecked: table2.map((i) => i.id).includes(d.imdbID),
       }));
 
       setTable1(() => search);
@@ -136,10 +136,12 @@ export default function CreateList() {
 
   const handelMoving = (imdbID, toTop) => {
     setTable2((prev) => {
-      const index = prev.indexOf(imdbID);
+      const index = prev.map((i) => i.id).indexOf(imdbID);
       const dir = toTop ? index - 1 : index + 1;
-      let tmp = prev.filter((i) => i !== imdbID);
-      tmp.splice(dir, 0, imdbID);
+      let tmp = prev.filter((i) => i.id !== imdbID);
+      console.log(prev, imdbID);
+
+      tmp.splice(dir, 0, { id: imdbID });
       return tmp;
     });
   };
@@ -174,54 +176,59 @@ export default function CreateList() {
 
         <SearchBox size="md" />
       </div>
-      <div
-        className="row border flex-nowrap rounded p-2 mx-2 d-lg-none"
-        style={{ minHeight: "250px", overflowX: "auto" }}
-      >
-        {table2.length > 0 ? (
-          table2.map((item, i) => (
-            <PhoneCreateRow
-              isList={true}
-              key={item.id}
-              item={item.id}
-              handelDelete={handelDelete}
-              handelMoving={handelMoving}
-              isFirst={i === 0}
-              isLast={i + 1 === table2.length}
-            />
-          ))
-        ) : (
-          <p className="text-secondary">Your list is Empty</p>
-        )}
-      </div>
+      {window.innerWidth < 992 ? (
+        <>
+          <div
+            className="row border flex-nowrap rounded p-2 mx-2 d-lg-none"
+            style={{ minHeight: "250px", overflowX: "auto" }}
+          >
+            {table2.length > 0 ? (
+              table2.map((item, i) => (
+                <PhoneCreateRow
+                  isList={true}
+                  key={item.id}
+                  item={item.id}
+                  handelDelete={handelDelete}
+                  handelMoving={handelMoving}
+                  isFirst={i === 0}
+                  isLast={i + 1 === table2.length}
+                />
+              ))
+            ) : (
+              <p className="text-secondary">Your list is Empty</p>
+            )}
+          </div>
 
-      <div
-        className="row border flex-nowrap rounded p-2 mt-3 mx-2 d-lg-none"
-        style={{ minHeight: "250px", overflowX: "auto" }}
-      >
-        {table1.length > 0 ? (
-          table1.map((item) => (
-            <PhoneCreateRow
-              isList={false}
-              key={item.id}
-              item={item.id}
-              handelAdd={handelAdd}
-              isChecked={item.isChecked}
-            />
-          ))
-        ) : (
-          <p className="text-secondary">Search somthing</p>
-        )}
-      </div>
-      <div className="row d-none d-lg-flex">
-        <DndCard
-          table1={table1}
-          table2={table2}
-          setTable1={setTable1}
-          setTable2={setTable2}
-          handelDelete={handelDelete}
-        />
-      </div>
+          <div
+            className="row border flex-nowrap rounded p-2 mt-3 mx-2 d-lg-none"
+            style={{ minHeight: "250px", overflowX: "auto" }}
+          >
+            {table1.length > 0 ? (
+              table1.map((item) => (
+                <PhoneCreateRow
+                  isList={false}
+                  key={item.id}
+                  item={item.id}
+                  handelAdd={handelAdd}
+                  isChecked={item.isChecked}
+                />
+              ))
+            ) : (
+              <p className="text-secondary">Search somthing</p>
+            )}
+          </div>
+        </>
+      ) : (
+        <div className="row d-none d-lg-flex">
+          <DndCard
+            table1={table1}
+            table2={table2}
+            setTable1={setTable1}
+            setTable2={setTable2}
+            handelDelete={handelDelete}
+          />
+        </div>
+      )}
     </>
   );
 }

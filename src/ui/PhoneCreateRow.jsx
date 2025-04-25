@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import ListAvatar from "./ListAvatar";
 import { useFetch } from "../hooks/usefetch";
 import { url } from "../assets/variables";
+import { is } from "date-fns/locale";
 
 const Selected = styled.button`
   border: 1px solid var(--primary-100);
@@ -40,6 +41,9 @@ export default function PhoneCreateRow({
   isViewing = false,
 }) {
   const { data, isPending } = useFetch(url + "i=" + item);
+  if (!isPending && !data) {
+    return;
+  }
 
   return (
     <div
@@ -94,7 +98,11 @@ export default function PhoneCreateRow({
           </>
         ) : (
           <div className="custom-centerize">
-            <Selected $isChecked={isChecked} onClick={() => handelAdd(item)}>
+            <Selected
+              $isChecked={isChecked}
+              disabled={isChecked}
+              onClick={() => handelAdd(item)}
+            >
               {isChecked && <i className="bi bi-check-lg text-dull fs-5" />}
             </Selected>
           </div>
